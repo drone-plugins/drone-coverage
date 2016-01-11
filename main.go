@@ -120,7 +120,7 @@ func main() {
 		fmt.Printf("Code coverage unchanged, %.1f%%\n", resp.Coverage)
 	}
 
-	if v.Threshold < resp.Coverage {
+	if v.Threshold < resp.Coverage && v.Threshold != 0 {
 		fmt.Printf("Failing build. Coverage threshold may not fall below %.1f%%\n", v.Threshold)
 		os.Exit(1)
 	}
