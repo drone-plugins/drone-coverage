@@ -5,5 +5,5 @@
 
 FROM alpine:3.2
 RUN apk add -U ca-certificates && rm -rf /var/cache/apk/*
-ADD plugin /bin/
-ENTRYPOINT ["/bin/plugin"]
+ADD drone-coverage /bin/
+ENTRYPOINT ["/bin/drone-coverage"]
