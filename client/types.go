@@ -32,20 +32,21 @@ type Repo struct {
 // Build represents a build in an external continuous integration
 // server for which coverage data has been collected.
 type Build struct {
-	Number   int     `json:"number"`
-	Event    string  `json:"event"`
-	Commit   string  `json:"commit"`
-	Branch   string  `json:"branch"`
-	Ref      string  `json:"ref"`
-	Refspec  string  `json:"refspec"`
-	Message  string  `json:"message"`
-	Author   string  `json:"author"`
-	Avatar   string  `json:"author_avatar"`
-	Link     string  `json:"link_url"`
-	Coverage float64 `json:"coverage_percent"`
-	Changed  float64 `json:"coverage_changed"`
-	Covered  int64   `json:"lines_covered"`
-	Lines    int64   `json:"lines_total"`
+	Number    int     `json:"number"`
+	Event     string  `json:"event"`
+	Commit    string  `json:"commit"`
+	Branch    string  `json:"branch"`
+	Ref       string  `json:"ref"`
+	Refspec   string  `json:"refspec"`
+	Message   string  `json:"message"`
+	Author    string  `json:"author"`
+	Avatar    string  `json:"author_avatar"`
+	Timestamp int64   `json:"timestamp"`
+	Link      string  `json:"link_url"`
+	Coverage  float64 `json:"coverage_percent"`
+	Changed   float64 `json:"coverage_changed"`
+	Covered   int64   `json:"lines_covered"`
+	Lines     int64   `json:"lines_total"`
 }
 
 // File represents a source file from your repository that

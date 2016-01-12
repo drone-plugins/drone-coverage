@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/drone-plugins/drone-coverage/client"
 	"github.com/drone/drone-go/drone"
@@ -56,16 +57,17 @@ func main() {
 	// coverage reporting server.
 	report := profileToReport(merged)
 	build := client.Build{
-		Number:  b.Number,
-		Event:   b.Event,
-		Commit:  b.Commit,
-		Branch:  b.Branch,
-		Ref:     b.Ref,
-		Refspec: b.Refspec,
-		Message: b.Message,
-		Author:  b.Author,
-		Avatar:  b.Avatar,
-		Link:    b.Link,
+		Number:    b.Number,
+		Event:     b.Event,
+		Commit:    b.Commit,
+		Branch:    b.Branch,
+		Ref:       b.Ref,
+		Refspec:   b.Refspec,
+		Message:   b.Message,
+		Author:    b.Author,
+		Avatar:    b.Avatar,
+		Link:      b.Link,
+		Timestamp: time.Now().UTC().Unix(),
 	}
 
 	// this code attempts we use the relative path to the
