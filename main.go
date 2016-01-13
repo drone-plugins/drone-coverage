@@ -15,6 +15,7 @@ import (
 	"golang.org/x/tools/cover"
 
 	_ "github.com/drone-plugins/drone-coverage/coverage/gocov"
+	_ "github.com/drone-plugins/drone-coverage/coverage/lcov"
 )
 
 type params struct {
