@@ -41,7 +41,9 @@ func (r *reader) ReadFrom(src io.Reader) ([]*cover.Profile, error) {
 	buf := bufio.NewReader(src)
 	s := bufio.NewScanner(buf)
 
-	profiles := []*cover.Profile{}
+	var profiles []*cover.Profile
+	var cols []int
+
 	profile := &cover.Profile{}
 	for s.Scan() {
 		line := s.Text()
@@ -52,10 +54,18 @@ func (r *reader) ReadFrom(src io.Reader) ([]*cover.Profile, error) {
 			profile.FileName = line[3:]
 			profile.Mode = "set"
 			profiles = append(profiles, profile)
+
+			// until I can think of a better way we need to know how many
+			// columns are in each line of code.
+			cols = calculateCols(profile)
+
 		case strings.HasPrefix(line, "DA:"):
 			parts := strings.Split(line[3:], ",")
 			line, _ := strconv.Atoi(parts[0])
 			count, _ := strconv.Atoi(parts[1])
+			if count > 0 {
+				count = 1
+			}
 
 			block := cover.ProfileBlock{}
 			block.NumStmt = 1
@@ -63,9 +73,10 @@ func (r *reader) ReadFrom(src io.Reader) ([]*cover.Profile, error) {
 			block.EndLine = line
 			block.Count = count
 
-			// TODO: not sure how to get this data yet
-			block.StartCol = 0
-			block.EndCol = 0
+			if len(cols) != 0 {
+				block.StartCol = 1
+				block.EndCol = cols[line-1]
+			}
 
 			profile.Blocks = append(profile.Blocks, block)
 		default:
@@ -74,4 +85,22 @@ func (r *reader) ReadFrom(src io.Reader) ([]*cover.Profile, error) {
 	}
 
 	return profiles, nil
+}
+
+// this is a helper function that is able to calculate the
+func calculateCols(profile *cover.Profile) []int {
+	var lines []int
+
+	f, err := os.Open(profile.FileName)
+	if err != nil {
+		return lines
+	}
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		cols := len(scanner.Bytes())
+		lines = append(lines, cols)
+	}
+	return lines
 }
