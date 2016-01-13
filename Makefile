@@ -13,7 +13,7 @@ deps:
 	go get -t ./...
 
 test:
-	@for PKG in $(PACKAGES); do go test -cover -coverprofile $$GOPATH/src/$$PKG/coverage.out $$PKG; done;
+	@for PKG in $(PACKAGES); do go test -cover -coverprofile $$GOPATH/src/$$PKG/coverage.out $$PKG || exit 1; done;
 
 build:
 	go build
