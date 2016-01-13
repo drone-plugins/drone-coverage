@@ -6,11 +6,14 @@ build:
     - GOARCH=amd64
     - CGO_ENABLED=0
   commands:
-    - go get
-    - go build
-    - go test
+    - make deps
+    - make build
+    - make test
 
 publish:
+  coverage:
+    when:
+      branch: master
   docker:
     username: drone
     password: $$DOCKER_PASS
