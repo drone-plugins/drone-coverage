@@ -157,7 +157,7 @@ func main() {
 		fmt.Printf("Failing build. Coverage threshold may not fall below %.1f%%\n", v.Threshold)
 		os.Exit(1)
 	}
-	if resp.Changed < 0 {
+	if resp.Changed < 0 && v.MustIncrease {
 		fmt.Println("Failing build. Coverage may not decrease")
 		os.Exit(1)
 	}
