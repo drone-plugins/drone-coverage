@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
 
 	"github.com/drone-plugins/drone-coverage/client"
+	"github.com/drone-plugins/drone-coverage/coverage"
 	"github.com/drone/drone-go/drone"
 	"github.com/drone/drone-go/plugin"
 	"golang.org/x/tools/cover"
@@ -17,6 +19,7 @@ type params struct {
 	Server       string  `json:"server"`
 	Token        string  `json:"token"`
 	Threshold    float64 `json:"threshold"`
+	Include      string  `json:"include"`
 	MustIncrease bool    `json:"must_increase"`
 }
 
@@ -34,15 +37,33 @@ func main() {
 	plugin.MustParse()
 
 	var merged []*cover.Profile
+	var include *regexp.Regexp
+	if v.Include != "" {
+		include, _ = regexp.CompilePOSIX(v.Include)
+		if include == nil {
+			fmt.Println("Error compiling regular expression %s", v.Include)
+			return
+		}
+	}
 
 	// merge all coverage reports into a single report
 	var walker = func(path string, info os.FileInfo, err error) error {
-		match, _ := filepath.Match("*.out", filepath.Base(path))
-		if !match {
+
+		// attempt to match the coverage file by path name using either
+		// the default regular expression or the custom.
+		if include != nil && !include.MatchString(path) {
+			return nil
+		} else if !coverage.IsMatch(path) {
 			return nil
 		}
+
 		fmt.Printf("Parsing coverage file %s\n", path)
-		profiles, err := cover.ParseProfiles(path)
+		ok, reader := coverage.FromFile(path)
+		if !ok {
+			fmt.Printf("Failure to determine coverage format %s\n", path)
+			return nil
+		}
+		profiles, err := reader.ReadFile(path)
 		if err != nil {
 			return err
 		}
@@ -74,10 +95,17 @@ func main() {
 	// project instead of an absoluate path. We should probably
 	// just exclude anything not in the repository workspace ...
 	for _, file := range report.Files {
+		// convert from absolute to relative path
+		file.FileName = strings.TrimPrefix(
+			file.FileName,
+			w.Path,
+		)
+		// convert from gopath to relative path
 		file.FileName = strings.TrimPrefix(
 			file.FileName,
 			strings.TrimPrefix(w.Path, "/drone/src/"),
 		)
+		// remove report prefix
 		file.FileName = strings.TrimPrefix(file.FileName, "/")
 	}
 
