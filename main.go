@@ -13,6 +13,8 @@ import (
 	"github.com/drone/drone-go/drone"
 	"github.com/drone/drone-go/plugin"
 	"golang.org/x/tools/cover"
+
+	_ "github.com/drone-plugins/drone-coverage/coverage/gocov"
 )
 
 type params struct {
