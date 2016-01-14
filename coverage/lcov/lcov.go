@@ -14,6 +14,7 @@ import (
 
 func init() {
 	coverage.Register("SF:", New())
+	coverage.Register("TN:", New())
 }
 
 type reader struct{}
