@@ -14,7 +14,12 @@ import (
 const sniffLen = 128
 
 // the list of registered sniffers.
-var sniffers = map[Reader][]byte{}
+var sniffers []*sniffer
+
+type sniffer struct {
+	reader Reader
+	sig    []byte
+}
 
 // regular expression that can be used to match common filepath patterns
 // as a first check to determine if something is a coverage report.
@@ -34,8 +39,8 @@ type Reader interface {
 }
 
 // Register registers a reader associated with the sniff pattern.
-func Register(match string, r Reader) {
-	sniffers[r] = []byte(match)
+func Register(sig string, r Reader) {
+	sniffers = append(sniffers, &sniffer{r, []byte(sig)})
 }
 
 // FromBytes reads the first 512 bytes of slice and returns a coverage
@@ -51,9 +56,9 @@ func FromBytes(data []byte) (bool, Reader) {
 		return false, nil
 	}
 	data = data[firstNonWS:]
-	for r, sig := range sniffers {
-		if bytes.HasPrefix(data, sig) {
-			return true, r
+	for _, sniffer := range sniffers {
+		if bytes.HasPrefix(data, sniffer.sig) {
+			return true, sniffer.reader
 		}
 	}
 	return false, nil
