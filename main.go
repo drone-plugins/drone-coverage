@@ -119,7 +119,7 @@ func main() {
 		v.Token = w.Netrc.Login
 	}
 	if v.Server == "" {
-		v.Server = "https://coverage.drone.io"
+		v.Server = "https://aircover.co"
 	}
 
 	cli := client.NewClient(v.Server)
