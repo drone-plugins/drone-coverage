@@ -26,7 +26,13 @@ type params struct {
 	MustIncrease bool    `json:"must_increase"`
 }
 
+var (
+	buildDate string
+)
+
 func main() {
+	fmt.Printf("Drone Coverage Plugin built at %s\n", buildDate)
+
 	var (
 		w = drone.Workspace{}
 		b = drone.Build{}
