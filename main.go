@@ -50,7 +50,7 @@ func main() {
 	if v.Include != "" {
 		include, _ = regexp.CompilePOSIX(v.Include)
 		if include == nil {
-			fmt.Println("Error compiling regular expression %s", v.Include)
+			fmt.Printf("Error compiling regular expression %s\n", v.Include)
 			return
 		}
 	}
