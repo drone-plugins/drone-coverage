@@ -4,7 +4,6 @@ build:
     - CGO_ENABLED=0
   commands:
     - make deps
-    - make vet
     - make build
     - make test
 
