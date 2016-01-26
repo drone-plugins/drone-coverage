@@ -26,7 +26,13 @@ type params struct {
 	MustIncrease bool    `json:"must_increase"`
 }
 
+var (
+	buildDate string
+)
+
 func main() {
+	fmt.Printf("Drone Coverage Plugin built at %s\n", buildDate)
+
 	var (
 		w = drone.Workspace{}
 		b = drone.Build{}
@@ -44,7 +50,7 @@ func main() {
 	if v.Include != "" {
 		include, _ = regexp.CompilePOSIX(v.Include)
 		if include == nil {
-			fmt.Println("Error compiling regular expression %s", v.Include)
+			fmt.Printf("Error compiling regular expression %s\n", v.Include)
 			return
 		}
 	}
