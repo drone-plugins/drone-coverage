@@ -1,9 +1,6 @@
 build:
   image: golang:1.5
   environment:
-    - GO15VENDOREXPERIMENT=1
-    - GOOS=linux
-    - GOARCH=amd64
     - CGO_ENABLED=0
   commands:
     - make deps
@@ -15,16 +12,25 @@ publish:
     when:
       branch: master
   docker:
-    username: drone
+    username: $$DOCKER_USER
     password: $$DOCKER_PASS
     email: $$DOCKER_EMAIL
     repo: plugins/drone-coverage
+    tag: latest
     when:
       branch: master
+  docker:
+    username: $$DOCKER_USER
+    password: $$DOCKER_PASS
+    email: $$DOCKER_EMAIL
+    repo: plugins/drone-coverage
+    tag: develop
+    when:
+      branch: develop
 
 plugin:
   name: Coverage
-  desc: Aggregate and publish coverage reports.
+  desc: Aggregate and publish coverage reports
   type: publish
   image: plugins/drone-coverage
   labels:
