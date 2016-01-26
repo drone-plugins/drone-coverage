@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"net"
+	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -31,11 +33,13 @@ func main() {
 		w = drone.Workspace{}
 		b = drone.Build{}
 		r = drone.Repo{}
+		s = drone.System{}
 		v = params{}
 	)
 	plugin.Param("workspace", &w)
 	plugin.Param("build", &b)
 	plugin.Param("repo", &r)
+	plugin.Param("sys", &s)
 	plugin.Param("vargs", &v)
 	plugin.MustParse()
 
@@ -119,7 +123,7 @@ func main() {
 		v.Token = w.Netrc.Login
 	}
 	if v.Server == "" {
-		v.Server = "https://aircover.co"
+		v.Server = resolveServer(s.Link)
 	}
 
 	cli := client.NewClient(v.Server)
@@ -202,7 +206,7 @@ func profileToReport(profiles []*cover.Profile) *client.Report {
 	return &report
 }
 
-// percentCovered is a help fucntion that calculate the percent
+// percentCovered is a helper fucntion that calculate the percent
 // coverage for coverage profile.
 func percentCovered(p *cover.Profile) (int64, int64, float64) {
 	var total, covered int64
@@ -217,4 +221,28 @@ func percentCovered(p *cover.Profile) (int64, int64, float64) {
 		percent = float64(covered) / float64(total) * float64(100)
 	}
 	return covered, total, percent
+}
+
+// resolveHost is a helper function that returns the default
+// coverage server url.
+func resolveServer(rawurl string) string {
+	url_, err := url.Parse(rawurl)
+	if err != nil {
+		return "https://aircover.co"
+	}
+	host, _, err := net.SplitHostPort(url_.Host)
+	if err != nil {
+		host = url_.Host
+	}
+	items, err := net.LookupTXT(host)
+	if err != nil {
+		return "https://aircover.co"
+	}
+
+	for _, txt := range items {
+		if strings.HasPrefix(txt, "coverage=") {
+			return txt[9:]
+		}
+	}
+	return "https://aircover.co"
 }
