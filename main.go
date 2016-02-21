@@ -29,11 +29,11 @@ type params struct {
 }
 
 var (
-	buildDate string
+	buildCommit string
 )
 
 func main() {
-	fmt.Printf("Drone Coverage Plugin built at %s\n", buildDate)
+	fmt.Printf("Drone Coverage Plugin built from %s\n", buildCommit)
 
 	var (
 		w = drone.Workspace{}
