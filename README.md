@@ -4,7 +4,7 @@
 [![Coverage Status](https://aircover.co/badges/drone-plugins/drone-coverage/coverage.svg)](https://aircover.co/drone-plugins/drone-coverage)
 [![](https://badge.imagelayers.io/plugins/drone-coverage:latest.svg)](https://imagelayers.io/?images=plugins/drone-coverage:latest 'Get your own badge on imagelayers.io')
 
-Drone plugin to aggregate and publish coverage reports
+Drone plugin to aggregate and publish coverage reports. For the usage information and a listing of the available options please take a look at [the docs](DOCS.md).
 
 ## Binary
 
