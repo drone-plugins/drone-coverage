@@ -34,6 +34,27 @@ func TestSniff(t *testing.T) {
 	}
 }
 
+func TestRelativePathsReplacement(t *testing.T) {
+	got, err := New().Read(sampleFileWithRelativePaths)
+	if err != nil {
+		t.Errorf("Expected LCOV parsed successfully, got error %s", err)
+	}
+
+	if !reflect.DeepEqual(got, sampleProfilesWithAbsolutePaths) {
+		t.Errorf("Expected LCOV parsed file equals test fixture")
+	}
+}
+
+var sampleProfilesWithAbsolutePaths = []*cover.Profile{
+	{
+		FileName: "/drone/src/github.com/donny-dont/dogma-codegen/lib/src/codegen/function_generator.dart",
+		Mode:     "set",
+		Blocks: []cover.ProfileBlock{
+			{NumStmt: 1, StartLine: 30, EndLine: 30, Count: 1},
+		},
+	},
+}
+
 var sampleProfiles = []*cover.Profile{
 	{
 		FileName: "/drone/src/github.com/donny-dont/dogma-codegen/lib/src/codegen/function_generator.dart",
@@ -63,6 +84,12 @@ var sampleProfiles = []*cover.Profile{
 		},
 	},
 }
+
+var sampleFileWithRelativePaths = []byte(`
+SF:./drone/src/github.com/donny-dont/dogma-codegen/lib/src/codegen/function_generator.dart
+DA:30,84
+end_of_record
+`)
 
 var sampleFile = []byte(`
 SF:/drone/src/github.com/donny-dont/dogma-codegen/lib/src/codegen/function_generator.dart

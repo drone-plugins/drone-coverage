@@ -52,7 +52,11 @@ func (r *reader) ReadFrom(src io.Reader) ([]*cover.Profile, error) {
 		switch {
 		case strings.HasPrefix(line, "SF:"):
 			profile = &cover.Profile{}
-			profile.FileName = line[3:]
+			if strings.HasPrefix(line[3:], "./") {
+				profile.FileName = strings.Replace(line[3:], "./", "/", 1)
+			} else {
+				profile.FileName = line[3:]
+			}
 			profile.Mode = "set"
 			profiles = append(profiles, profile)
 
