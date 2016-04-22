@@ -1,6 +1,8 @@
 package main
 
 import (
+	"crypto/tls"
+	"crypto/x509"
 	"fmt"
 	"net"
 	"net/url"
@@ -26,6 +28,7 @@ type params struct {
 	Threshold    float64 `json:"threshold"`
 	Include      string  `json:"include"`
 	MustIncrease bool    `json:"must_increase"`
+	CACert       string  `json:"ca_cert"`
 }
 
 var (
@@ -134,13 +137,26 @@ func main() {
 		v.Server = resolveServer(s.Link)
 	}
 
+	// Handle provided custom CA certs
+	caCertPool := x509.NewCertPool()
+	tlsConfig := &tls.Config{RootCAs: caCertPool}
 	cli := client.NewClient(v.Server)
+	if v.CACert != "" {
+		caCertPool.AppendCertsFromPEM([]byte(v.CACert))
+		tlsConfig = &tls.Config{RootCAs: caCertPool}
+		cli = client.NewClientTLS(v.Server, tlsConfig)
+	}
+
 	token, err := cli.Token(v.Token)
 	if err != nil {
 		fmt.Printf("Cannot authenticate. %s\n", err)
 		os.Exit(1)
 	}
-	cli = client.NewClientToken(v.Server, token.Access)
+	if v.CACert != "" {
+		cli = client.NewClientTokenTLS(v.Server, token.Access, tlsConfig)
+	} else {
+		cli = client.NewClientToken(v.Server, token.Access)
+	}
 
 	// check and see if the repository exists. if not, activate
 	if _, err := cli.Repo(r.FullName); err != nil {
