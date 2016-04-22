@@ -48,6 +48,8 @@ func main() {
 	plugin.Param("sys", &s)
 	plugin.Param("vargs", &v)
 	plugin.MustParse()
+	
+	os.Chdir(w.Path)
 
 	var merged []*cover.Profile
 	var include *regexp.Regexp
