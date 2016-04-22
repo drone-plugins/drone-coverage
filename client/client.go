@@ -2,6 +2,7 @@ package client
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -30,11 +31,32 @@ func NewClient(uri string) Client {
 	return &client{http.DefaultClient, uri}
 }
 
+func NewClientTLS(uri string, tlsConfig *tls.Config) Client {
+	httpClient := http.DefaultClient
+	if tlsConfig != nil {
+		transport := &http.Transport{TLSClientConfig: tlsConfig}
+		httpClient = &http.Client{Transport: transport}
+	}
+	return &client{httpClient, uri}
+}
+
 // NewClientToken returns a client at the specified url that
 // authenticates all outbound requests with the given token.
 func NewClientToken(uri, token string) Client {
 	config := new(oauth2.Config)
 	auther := config.Client(oauth2.NoContext, &oauth2.Token{AccessToken: token})
+	return &client{auther, uri}
+}
+
+// NewClientTokenTLS returns a client at the specified url that
+// authenticates all outbound requests with the given token and
+// tls.Config if provided.
+func NewClientTokenTLS(uri, token string, tlsConfig *tls.Config) Client {
+	config := new(oauth2.Config)
+	auther := config.Client(oauth2.NoContext, &oauth2.Token{AccessToken: token})
+	if tlsConfig != nil {
+		auther.Transport.(*oauth2.Transport).Base = &http.Transport{TLSClientConfig: tlsConfig}
+	}
 	return &client{auther, uri}
 }
 
