@@ -4,9 +4,10 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"fmt"
-	"os"
+	"io/ioutil"
 	"time"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
 	"github.com/drone-plugins/drone-coverage/client"
 	"github.com/drone-plugins/drone-coverage/coverage"
@@ -84,6 +85,16 @@ var PublishCmd = cli.Command{
 			Value:  "**/*.*",
 			EnvVar: "PLUGIN_SERVER",
 		},
+		cli.Float64Flag{
+			Name:   "threshold",
+			Usage:  "coverage threshold",
+			EnvVar: "PLUGIN_THRESHOLD",
+		},
+		cli.BoolFlag{
+			Name:   "increase",
+			Usage:  "coverage must increase",
+			EnvVar: "PLUGIN_MUST_INCREASE",
+		},
 		cli.StringFlag{
 			Name:   "cert",
 			Usage:  "coverage cert",
@@ -91,20 +102,20 @@ var PublishCmd = cli.Command{
 		},
 		cli.StringFlag{
 			Name:   "token",
-			Usage:  "coverage token",
-			EnvVar: "COVERAGE_TOKEN",
+			Usage:  "github token",
+			EnvVar: "GITHUB_TOKEN",
 		},
 	},
 	Action: func(c *cli.Context) {
-		err := publish(c)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			os.Exit(1)
+		if err := publish(c); err != nil {
+			logrus.Fatal(err)
 		}
 	},
 }
 
 func publish(c *cli.Context) error {
+
+	logrus.Debugf("finding coverage files that match %s", c.String("pattern"))
 
 	matches, err := zglob.Glob(c.String("pattern"))
 	if err != nil {
@@ -113,13 +124,15 @@ func publish(c *cli.Context) error {
 
 	var profiles []*cover.Profile
 	for _, match := range matches {
-
 		ok, reader := coverage.FromFile(match)
 		if !ok {
 			continue
 		}
-		parsed, err := reader.ReadFile(match)
-		if err != nil {
+
+		logrus.Debugf("found coverage file %s", match)
+
+		parsed, rerr := reader.ReadFile(match)
+		if rerr != nil {
 			return err
 		}
 
@@ -163,67 +176,47 @@ func publish(c *cli.Context) error {
 	// 	file.FileName = strings.TrimPrefix(file.FileName, "/")
 	// }
 
-	// Use the GitHub token in the Netrc file to authenticate
-	// to the coverage server. For security purposes, we only
-	// do this for the official coverage service.
-	// if p.Config.Token == "" && p.Config.Server == "" {
-	// 	v.Token = w.Netrc.Login
-	// }
-	// if v.Server == "" {
-	// 	// v.Server = resolveServer(s.Link)
-	// }
+	var (
+		repo   = c.String("repo.fullname")
+		server = c.String("server")
+		secret = c.String("token")
+		cert   = c.String("cert")
+	)
 
-	// Handle provided custom CA certs
-	caCertPool := x509.NewCertPool()
-	tlsConfig := &tls.Config{RootCAs: caCertPool}
-	cli := client.NewClient(c.String("server"))
-	if c.String("cert") != "" {
-		caCertPool.AppendCertsFromPEM([]byte(c.String("cert")))
-		tlsConfig = &tls.Config{RootCAs: caCertPool}
-		cli = client.NewClientTLS(c.String("server"), tlsConfig)
-	}
-
-	token, err := cli.Token(c.String("token"))
+	cli := newClient(server, cert, "")
+	token, err := cli.Token(secret)
 	if err != nil {
 		return err
 	}
-	if c.String("cert") != "" {
-		cli = client.NewClientTokenTLS(c.String("server"), token.Access, tlsConfig)
-	} else {
-		cli = client.NewClientToken(c.String("server"), token.Access)
-	}
+	cli = newClient(server, cert, token.Access)
 
 	// check and see if the repository exists. if not, activate
-	if _, err := cli.Repo(c.String("repo.fullname")); err != nil {
-		if _, err := cli.Activate(c.String("repo.fullname")); err != nil {
+	if _, err := cli.Repo(repo); err != nil {
+		if _, err := cli.Activate(repo); err != nil {
 			return err
 		}
 	}
 
-	resp, err := cli.Submit(c.String("repo.fullname"), &build, report)
+	resp, err := cli.Submit(repo, &build, report)
 	if err != nil {
 		return err
 	}
 
-	if resp != nil {
-		// nothing. this is just here to avoid unused variable compiler error for now
+	switch {
+	case resp.Changed > 0:
+		fmt.Printf("Code coverage increased %.1f%% to %.1f%%\n", resp.Changed, resp.Coverage)
+	case resp.Changed < 0:
+		fmt.Printf("Code coverage dropped %.1f%% to %.1f%%\n", resp.Changed, resp.Coverage)
+	default:
+		fmt.Printf("Code coverage unchanged, %.1f%%\n", resp.Coverage)
 	}
 
-	// switch {
-	// case resp.Changed > 0:
-	// 	return fmt.Errorf("Code coverage increased %.1f%% to %.1f%%\n", resp.Changed, resp.Coverage)
-	// case resp.Changed < 0:
-	// 	return fmt.Errorf("Code coverage dropped %.1f%% to %.1f%%\n", resp.Changed, resp.Coverage)
-	// default:
-	// 	return fmt.Errorf("Code coverage unchanged, %.1f%%\n", resp.Coverage)
-	// }
-
-	// if p.Config.Threshold < resp.Coverage && p.Config.Threshold != 0 {
-	// 	return fmt.Errorf("Failing build. Coverage threshold may not fall below %.1f%%\n", p.Config.Threshold)
-	// }
-	// if resp.Changed < 0 && p.Config.MustIncrease {
-	// 	return fmt.Errorf("Failing build. Coverage may not decrease")
-	// }
+	if c.Float64("threshold") < resp.Coverage && c.Float64("threshold") != 0 {
+		return fmt.Errorf("Failing build. Coverage threshold may not fall below %.1f%%\n", c.Float64("threshold"))
+	}
+	if resp.Changed < 0 && c.Bool("increase") {
+		return fmt.Errorf("Failing build. Coverage may not decrease")
+	}
 
 	return nil
 }
@@ -282,4 +275,18 @@ func percentCovered(p *cover.Profile) (int64, int64, float64) {
 		percent = float64(covered) / float64(total) * float64(100)
 	}
 	return covered, total, percent
+}
+
+// newClient returns a new coverage server client.
+func newClient(server, cert, token string) client.Client {
+	pool := x509.NewCertPool()
+	conf := &tls.Config{RootCAs: pool}
+	pem, _ := ioutil.ReadFile(cert)
+	if len(pem) != 0 {
+		pool.AppendCertsFromPEM(pem)
+	}
+	if len(token) == 0 {
+		return client.NewClientTLS(server, conf)
+	}
+	return client.NewClientTokenTLS(server, token, conf)
 }

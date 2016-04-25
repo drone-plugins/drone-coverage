@@ -18,13 +18,13 @@ publish:
     repo: plugins/coverage
     tag: latest
     when:
-      branch: master
+      branch: release/0.5
 
 plugin:
   name: Coverage
   desc: Aggregate and publish coverage reports
   type: publish
-  image: plugins/drone-coverage
+  image: plugins/coverage
   labels:
     - coverage
     - reporting
