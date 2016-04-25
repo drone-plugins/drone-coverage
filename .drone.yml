@@ -15,18 +15,10 @@ publish:
     username: $$DOCKER_USER
     password: $$DOCKER_PASS
     email: $$DOCKER_EMAIL
-    repo: plugins/drone-coverage
+    repo: plugins/coverage
     tag: latest
     when:
       branch: master
-  docker:
-    username: $$DOCKER_USER
-    password: $$DOCKER_PASS
-    email: $$DOCKER_EMAIL
-    repo: plugins/drone-coverage
-    tag: develop
-    when:
-      branch: develop
 
 plugin:
   name: Coverage
