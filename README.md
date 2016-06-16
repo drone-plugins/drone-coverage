@@ -1,99 +1,54 @@
-# drone-coverage
+# drone-marathon
 
-[![Build Status](http://beta.drone.io/api/badges/drone-plugins/drone-coverage/status.svg)](http://beta.drone.io/drone-plugins/drone-coverage)
-[![Coverage Status](https://aircover.co/badges/drone-plugins/drone-coverage/coverage.svg)](https://aircover.co/drone-plugins/drone-coverage)
-[![](https://badge.imagelayers.io/plugins/drone-coverage:latest.svg)](https://imagelayers.io/?images=plugins/drone-coverage:latest 'Get your own badge on imagelayers.io')
+[![Build Status](http://beta.drone.io/api/badges/drone-plugins/drone-marathon/status.svg)](http://beta.drone.io/drone-plugins/drone-marathon)
+[![Coverage Status](https://aircover.co/badges/drone-plugins/drone-marathon/coverage.svg)](https://aircover.co/drone-plugins/drone-marathon)
+[![](https://badge.imagelayers.io/plugins/marathon:latest.svg)](https://imagelayers.io/?images=plugins/marathon:latest 'Get your own badge on imagelayers.io')
 
 Drone plugin to aggregate and publish coverage reports. For the usage information and a listing of the available options please take a look at [the docs](DOCS.md).
 
-## Binary
+## Build
 
-Build the binary using `make`:
+Build the binary with the following command:
 
 ```
-make deps build
-```
-
-### Example
-
-```sh
-./drone-coverage <<EOF
-{
-    "repo": {
-        "clone_url": "git://github.com/drone/drone",
-        "owner": "drone",
-        "name": "drone",
-        "full_name": "drone/drone"
-    },
-    "system": {
-        "link_url": "https://beta.drone.io"
-    },
-    "build": {
-        "number": 22,
-        "status": "success",
-        "started_at": 1421029603,
-        "finished_at": 1421029813,
-        "message": "Update the Readme",
-        "author": "johnsmith",
-        "author_email": "john.smith@gmail.com"
-        "event": "push",
-        "branch": "master",
-        "commit": "436b7a6e2abaddfd35740527353e78a227ddcb2c",
-        "ref": "refs/heads/master"
-    },
-    "workspace": {
-        "root": "/drone/src",
-        "path": "/drone/src/github.com/drone/drone"
-    },
-    "vargs": {
-        "token": "8a4bb89ef3a67b7a3a5cae7a3277d53a910ff13f"
-    }
-}
-EOF
+make build
 ```
 
 ## Docker
 
-Build the container using `make`:
+Build the docker image with the following command:
 
 ```
-make deps docker
+make docker
 ```
 
-### Example
+Please note incorrectly building the image for the correct x64 linux and with GCO disabled will result in an error when running the Docker image:
 
-```sh
-docker run -i plugins/drone-coverage <<EOF
-{
-    "repo": {
-        "clone_url": "git://github.com/drone/drone",
-        "owner": "drone",
-        "name": "drone",
-        "full_name": "drone/drone"
-    },
-    "system": {
-        "link_url": "https://beta.drone.io"
-    },
-    "build": {
-        "number": 22,
-        "status": "success",
-        "started_at": 1421029603,
-        "finished_at": 1421029813,
-        "message": "Update the Readme",
-        "author": "johnsmith",
-        "author_email": "john.smith@gmail.com"
-        "event": "push",
-        "branch": "master",
-        "commit": "436b7a6e2abaddfd35740527353e78a227ddcb2c",
-        "ref": "refs/heads/master"
-    },
-    "workspace": {
-        "root": "/drone/src",
-        "path": "/drone/src/github.com/drone/drone"
-    },
-    "vargs": {
-        "token": "8a4bb89ef3a67b7a3a5cae7a3277d53a910ff13f"
-    }
-}
-EOF
+```
+docker: Error response from daemon: Container command
+'/bin/drone-coverage' not found or does not exist..
+```
+
+## Usage
+
+Build and publish from your current working directory:
+
+```
+docker run --rm \
+  -e PLUGIN_SERVER=https://aircover.co \
+  -e PLUGIN_TOKEN=8a4bb89ef3a67b7a3a5cae7a3277d53a910ff13f \
+
+
+
+
+
+  -e DRONE_COMMIT_SHA=d8dbe4d94f15fe89232e0402c6e8a0ddf21af3ab \
+
+
+
+
+
+  -v $(pwd)/$(pwd) \
+  -w $(pwd) \
+  plugins/coverage
 ```
