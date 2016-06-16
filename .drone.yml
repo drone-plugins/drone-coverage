@@ -1,38 +1,40 @@
-build:
-  image: golang:1.5
-  environment:
-    - CGO_ENABLED=0
-  commands:
-    - make deps
-    - make build
-    - make test
+workspace:
+  base: /go
+  path: src/github.com/drone-plugins/drone-coverage
 
-publish:
-  coverage:
+pipeline:
+  test:
+    image: golang:1.6
+    commands:
+      - make vet
+      - make build
+      - make test
+  # coverage:
+  #   when:
+  #     branch: master
+  #     event: push
+  latest:
+    image: docker
+    storage_driver: overlay
+    repo: plugins/coverage
+    tags: [ "latest", "0.5" ]
     when:
       branch: master
-  docker:
-    username: $$DOCKER_USER
-    password: $$DOCKER_PASS
-    email: $$DOCKER_EMAIL
-    repo: plugins/drone-coverage
-    tag: latest
-    when:
-      branch: master
-  docker:
-    username: $$DOCKER_USER
-    password: $$DOCKER_PASS
-    email: $$DOCKER_EMAIL
-    repo: plugins/drone-coverage
-    tag: develop
+      event: push
+  develop:
+    image: docker
+    storage_driver: overlay
+    repo: plugins/coverage
+    tags: [ "develop" ]
     when:
       branch: develop
+      event: push
 
 plugin:
   name: Coverage
   desc: Aggregate and publish coverage reports
   type: publish
-  image: plugins/drone-coverage
+  image: plugins/coverage
   labels:
     - coverage
     - reporting
