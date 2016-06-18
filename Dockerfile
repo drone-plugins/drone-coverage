@@ -1,4 +1,4 @@
-# Docker image for Drone's git-clone plugin
+# Docker image for Drone's coverage plugin
 #
 #     CGO_ENABLED=0 go build -a -tags netgo
 #     docker build --rm=true -t plugins/drone-coverage .
