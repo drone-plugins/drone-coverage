@@ -1,24 +1,32 @@
-build:
-  image: golang:1.5
-  environment:
-    - CGO_ENABLED=0
-  commands:
-    - make deps
-    - make build
-    - make test
+workspace:
+  base: /go
+  path: src/github.com/drone-plugins/drone-coverage
 
-publish:
-  coverage:
+pipeline:
+  test:
+    image: golang:1.6
+    environment:
+      - CGO_ENABLED=0
+    commands:
+      - go vet
+      - go test -cover -coverprofile=coverage.out
+      - go build -ldflags "-s -w -X main.build=$DRONE_BUILD_NUMBER"
+  latest:
+    image: docker
+    storage_driver: overlay
+    repo: plugins/coverage
+    tags: [ "latest", "1.0", "1" ]
     when:
       branch: master
-  docker:
-    username: $$DOCKER_USER
-    password: $$DOCKER_PASS
-    email: $$DOCKER_EMAIL
+      event: push
+  develop:
+    image: docker
+    storage_driver: overlay
     repo: plugins/coverage
-    tag: latest
+    tags: [ "develop" ]
     when:
-      branch: release/0.5
+      branch: develop
+      event: push
 
 plugin:
   name: Coverage
