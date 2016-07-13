@@ -1,4 +1,4 @@
-# drone-slack
+# drone-coverage
 
 Drone plugin for publishing coverage reports
 
