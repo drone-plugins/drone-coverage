@@ -1,0 +1,61 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "yXrS4e4yxaRBu/MX+39X3cS4kbg=",
+			"path": "github.com/Sirupsen/logrus",
+			"revision": "a283a10442df8dc09befd873fab202bf8a253d6a",
+			"revisionTime": "2016-07-16T02:56:31Z"
+		},
+		{
+			"checksumSHA1": "hw9zjMNkIXagO6I9XenyFqbCQOU=",
+			"path": "github.com/codegangsta/cli",
+			"revision": "11c134509d89c2018675f369955218a180dc7428",
+			"revisionTime": "2016-07-16T16:11:36Z"
+		},
+		{
+			"checksumSHA1": "ljZrmD7pmMXAkGNfp6IEzj31fY8=",
+			"path": "github.com/joho/godotenv",
+			"revision": "4ed13390c0acd2ff4e371e64d8b97c8954138243",
+			"revisionTime": "2015-09-07T01:02:28Z"
+		},
+		{
+			"checksumSHA1": "UE4lhbPYYWEhqHXQk24OA73m5+8=",
+			"path": "github.com/joho/godotenv/autoload",
+			"revision": "4ed13390c0acd2ff4e371e64d8b97c8954138243",
+			"revisionTime": "2015-09-07T01:02:28Z"
+		},
+		{
+			"checksumSHA1": "kyzMPE3pJ8dc+ifT9Ie682Wb+8I=",
+			"path": "github.com/mattn/go-zglob",
+			"revision": "2dbd7f37a45e993d5180a251b4bdd314d6333b70",
+			"revisionTime": "2016-06-07T00:28:33Z"
+		},
+		{
+			"checksumSHA1": "9jjO5GjLa0XF/nfWihF02RoH4qc=",
+			"path": "golang.org/x/net/context",
+			"revision": "be28236b9034a52ec04f37f16f355b4bde7807e2",
+			"revisionTime": "2016-07-16T21:40:20Z"
+		},
+		{
+			"checksumSHA1": "mktBVED98G2vv+OKcSgtnFVZC1Y=",
+			"path": "golang.org/x/oauth2",
+			"revision": "4470bd844ebb05a09d21d3f54d5824a81b5f45af",
+			"revisionTime": "2016-07-15T14:59:14Z"
+		},
+		{
+			"checksumSHA1": "D3v/aqfB9swlaZcSksCoF+lbOqo=",
+			"path": "golang.org/x/oauth2/internal",
+			"revision": "4470bd844ebb05a09d21d3f54d5824a81b5f45af",
+			"revisionTime": "2016-07-15T14:59:14Z"
+		},
+		{
+			"checksumSHA1": "O5eYI3n1WdaC30AxQjETe3dAQHU=",
+			"path": "golang.org/x/tools/cover",
+			"revision": "cda5280914a6bccec2b76d8d4341f4f4c5d62592",
+			"revisionTime": "2016-07-06T17:21:57Z"
+		}
+	],
+	"rootPath": "github.com/drone-plugins/drone-coverage"
+}
