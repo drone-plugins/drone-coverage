@@ -7,9 +7,9 @@ import (
 
 	"golang.org/x/tools/cover"
 
-	"github.com/codegangsta/cli"
 	"github.com/drone-plugins/drone-coverage/coverage/lcov"
 	"github.com/mattn/go-zglob"
+	"github.com/urfave/cli"
 )
 
 // LcovCmd is the exported command for converting LCOV files.

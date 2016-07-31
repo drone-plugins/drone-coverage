@@ -8,10 +8,10 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/codegangsta/cli"
 	"github.com/drone-plugins/drone-coverage/client"
 	"github.com/drone-plugins/drone-coverage/coverage"
 	"github.com/mattn/go-zglob"
+	"github.com/urfave/cli"
 	"golang.org/x/tools/cover"
 )
 

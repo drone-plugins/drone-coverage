@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/codegangsta/cli"
 	"github.com/drone-plugins/drone-coverage/coverage/gocov"
 	"github.com/mattn/go-zglob"
+	"github.com/urfave/cli"
 	"golang.org/x/tools/cover"
 )
 
