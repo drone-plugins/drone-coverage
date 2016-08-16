@@ -1,0 +1,109 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "vwpCebe1/Uw4IVvhoCEzrsBoA+E=",
+			"path": "github.com/Sirupsen/logrus",
+			"revision": "418b41d23a1bf978c06faea5313ba194650ac088",
+			"revisionTime": "2015-09-08T20:46:18Z"
+		},
+		{
+			"checksumSHA1": "Ph3AzJaMHZxUdyqWL+Lx3CufxRw=",
+			"path": "github.com/golang/protobuf/proto",
+			"revision": "552c7b9542c194800fd493123b3798ef0a832032",
+			"revisionTime": "2016-02-26T01:45:00Z"
+		},
+		{
+			"checksumSHA1": "ljZrmD7pmMXAkGNfp6IEzj31fY8=",
+			"path": "github.com/joho/godotenv",
+			"revision": "4ed13390c0acd2ff4e371e64d8b97c8954138243",
+			"revisionTime": "2015-09-07T01:02:28Z"
+		},
+		{
+			"checksumSHA1": "UE4lhbPYYWEhqHXQk24OA73m5+8=",
+			"path": "github.com/joho/godotenv/autoload",
+			"revision": "4ed13390c0acd2ff4e371e64d8b97c8954138243",
+			"revisionTime": "2015-09-07T01:02:28Z"
+		},
+		{
+			"checksumSHA1": "kyzMPE3pJ8dc+ifT9Ie682Wb+8I=",
+			"path": "github.com/mattn/go-zglob",
+			"revision": "2dbd7f37a45e993d5180a251b4bdd314d6333b70",
+			"revisionTime": "2016-06-07T00:28:33Z"
+		},
+		{
+			"checksumSHA1": "W1G9Avuz92Ng1IqblcO/cIe6pHU=",
+			"path": "github.com/urfave/cli",
+			"revision": "d9021faab69f92295ef7061bd39e4a76dcbdef32",
+			"revisionTime": "2016-07-26T01:14:03Z"
+		},
+		{
+			"checksumSHA1": "pancewZW3HwGvpDwfH5Imrbadc4=",
+			"path": "golang.org/x/net/context",
+			"revision": "e45385e9b226f570b1f086bf287b25d3d4117776",
+			"revisionTime": "2016-04-07T02:17:48Z"
+		},
+		{
+			"checksumSHA1": "mktBVED98G2vv+OKcSgtnFVZC1Y=",
+			"path": "golang.org/x/oauth2",
+			"revision": "2cd4472c321b6cba78e029d99f0e7fe51032fd21",
+			"revisionTime": "2016-02-22T03:00:05Z"
+		},
+		{
+			"checksumSHA1": "5I5bOhNoz/48LHx1SykyebYFOCY=",
+			"path": "golang.org/x/oauth2/internal",
+			"revision": "2cd4472c321b6cba78e029d99f0e7fe51032fd21",
+			"revisionTime": "2016-02-22T03:00:05Z"
+		},
+		{
+			"checksumSHA1": "O5eYI3n1WdaC30AxQjETe3dAQHU=",
+			"path": "golang.org/x/tools/cover",
+			"revision": "5b59ce8b5f114a06fca053c08a380efbcbf7a5e5",
+			"revisionTime": "2016-06-06T11:27:18Z"
+		},
+		{
+			"checksumSHA1": "vkIkV0+9xGOpe8Wb2wIkEIMm+qw=",
+			"path": "google.golang.org/appengine/internal",
+			"revision": "d1a42f52ede0dee193ca4bef13a979eaa9578649",
+			"revisionTime": "2015-11-19T04:43:11Z"
+		},
+		{
+			"checksumSHA1": "TsNO8P0xUlLNyh3Ic/tzSp/fDWM=",
+			"path": "google.golang.org/appengine/internal/base",
+			"revision": "d1a42f52ede0dee193ca4bef13a979eaa9578649",
+			"revisionTime": "2015-11-19T04:43:11Z"
+		},
+		{
+			"checksumSHA1": "5QsV5oLGSfKZqTCVXP6NRz5T4Tw=",
+			"path": "google.golang.org/appengine/internal/datastore",
+			"revision": "d1a42f52ede0dee193ca4bef13a979eaa9578649",
+			"revisionTime": "2015-11-19T04:43:11Z"
+		},
+		{
+			"checksumSHA1": "Gep2T9zmVYV8qZfK2gu3zrmG6QE=",
+			"path": "google.golang.org/appengine/internal/log",
+			"revision": "d1a42f52ede0dee193ca4bef13a979eaa9578649",
+			"revisionTime": "2015-11-19T04:43:11Z"
+		},
+		{
+			"checksumSHA1": "a1XY7rz3BieOVqVI2Et6rKiwQCk=",
+			"path": "google.golang.org/appengine/internal/remote_api",
+			"revision": "d1a42f52ede0dee193ca4bef13a979eaa9578649",
+			"revisionTime": "2015-11-19T04:43:11Z"
+		},
+		{
+			"checksumSHA1": "QtAbHtHmDzcf6vOV9eqlCpKgjiw=",
+			"path": "google.golang.org/appengine/internal/urlfetch",
+			"revision": "d1a42f52ede0dee193ca4bef13a979eaa9578649",
+			"revisionTime": "2015-11-19T04:43:11Z"
+		},
+		{
+			"checksumSHA1": "akOV9pYnCbcPA8wJUutSQVibdyg=",
+			"path": "google.golang.org/appengine/urlfetch",
+			"revision": "d1a42f52ede0dee193ca4bef13a979eaa9578649",
+			"revisionTime": "2015-11-19T04:43:11Z"
+		}
+	],
+	"rootPath": "github.com/drone-plugins/drone-coverage"
+}
