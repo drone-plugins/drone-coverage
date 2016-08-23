@@ -4,7 +4,6 @@ import (
 	"os"
 
 	"github.com/Sirupsen/logrus"
-	_ "github.com/joho/godotenv/autoload"
 	"github.com/urfave/cli"
 )
 
@@ -38,12 +37,13 @@ func main() {
 }
 
 func setup(c *cli.Context) error {
+	logrus.SetOutput(os.Stderr)
+
 	if c.GlobalBool("debug") {
 		logrus.SetLevel(logrus.DebugLevel)
 	} else {
 		logrus.SetLevel(logrus.WarnLevel)
 	}
-	logrus.SetOutput(os.Stderr)
 
 	return nil
 }

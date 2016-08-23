@@ -10,6 +10,7 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/drone-plugins/drone-coverage/client"
 	"github.com/drone-plugins/drone-coverage/coverage"
+	"github.com/joho/godotenv"
 	"github.com/mattn/go-zglob"
 	"github.com/urfave/cli"
 	"golang.org/x/tools/cover"
@@ -105,15 +106,20 @@ var PublishCmd = cli.Command{
 			Usage:  "github token",
 			EnvVar: "GITHUB_TOKEN",
 		},
+		cli.StringFlag{
+			Name:  "env-file",
+			Usage: "source env file",
+		},
 	},
-	Action: func(c *cli.Context) {
-		if err := publish(c); err != nil {
-			logrus.Fatal(err)
-		}
+	Action: func(c *cli.Context) error {
+		return publish(c)
 	},
 }
 
 func publish(c *cli.Context) error {
+	if c.String("env-file") != "" {
+		_ = godotenv.Load(c.String("env-file"))
+	}
 
 	logrus.Debugf("finding coverage files that match %s", c.String("pattern"))
 

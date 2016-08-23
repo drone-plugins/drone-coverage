@@ -5,11 +5,10 @@ import (
 	"fmt"
 	"os"
 
-	"golang.org/x/tools/cover"
-
 	"github.com/drone-plugins/drone-coverage/coverage/lcov"
 	"github.com/mattn/go-zglob"
 	"github.com/urfave/cli"
+	"golang.org/x/tools/cover"
 )
 
 // LcovCmd is the exported command for converting LCOV files.
@@ -17,12 +16,8 @@ var LcovCmd = cli.Command{
 	Name:  "lcov",
 	Usage: "parse lcov files",
 	Flags: []cli.Flag{},
-	Action: func(c *cli.Context) {
-		err := parseLcov(c)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			os.Exit(1)
-		}
+	Action: func(c *cli.Context) error {
+		return parseLcov(c)
 	},
 }
 

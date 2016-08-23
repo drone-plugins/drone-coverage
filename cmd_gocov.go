@@ -16,12 +16,8 @@ var GocovCmd = cli.Command{
 	Name:  "gocov",
 	Usage: "parse gocov files",
 	Flags: []cli.Flag{},
-	Action: func(c *cli.Context) {
-		err := parseGocov(c)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			os.Exit(1)
-		}
+	Action: func(c *cli.Context) error {
+		return parseGocov(c)
 	},
 }
 
