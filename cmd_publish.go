@@ -11,7 +11,7 @@ import (
 	"github.com/drone-plugins/drone-coverage/client"
 	"github.com/drone-plugins/drone-coverage/coverage"
 	"github.com/joho/godotenv"
-	"github.com/mattn/go-zglob"
+	zglob "github.com/mattn/go-zglob"
 	"github.com/urfave/cli"
 	"golang.org/x/tools/cover"
 )
@@ -122,7 +122,6 @@ func publish(c *cli.Context) error {
 	}
 
 	logrus.Debugf("finding coverage files that match %s", c.String("pattern"))
-
 	matches, err := zglob.Glob(c.String("pattern"))
 	if err != nil {
 		return err
@@ -285,10 +284,11 @@ func percentCovered(p *cover.Profile) (int64, int64, float64) {
 
 // newClient returns a new coverage server client.
 func newClient(server, cert, token string) client.Client {
-	pool := x509.NewCertPool()
-	conf := &tls.Config{RootCAs: pool}
+	conf := &tls.Config{}
 	pem, _ := ioutil.ReadFile(cert)
 	if len(pem) != 0 {
+		pool := x509.NewCertPool()
+		conf.RootCAs = pool
 		pool.AppendCertsFromPEM(pem)
 	}
 	if len(token) == 0 {
