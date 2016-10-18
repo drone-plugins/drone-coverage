@@ -25,4 +25,5 @@ _testmain.go
 .env
 
 coverage.out
+coverage.xml
 drone-coverage
