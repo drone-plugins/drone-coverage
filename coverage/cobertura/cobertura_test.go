@@ -1,6 +1,7 @@
 package cobertura
 
 import (
+	"fmt"
 	"testing"
 
 	"golang.org/x/tools/cover"
@@ -8,14 +9,16 @@ import (
 
 func TestXML(t *testing.T) {
 	r := new(reader)
-	xml, err := r.parseXML(sampleFile)
+	x, err := r.parseXML(sampleFile)
+
+	fmt.Println(x)
 
 	if err != nil {
-		t.Errorf("Expected XML Cobertura file parsed successfully, got error %s", err)
+		t.Fatalf("Expected XML Cobertura file parsed successfully, got error %s", err)
 	}
 
-	if xml.Packages[0].Name != "/home/fbcbarbosa/Development/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go" {
-		t.Errorf("Wrong name, got %s", xml.Packages[0].Name)
+	if x.Packages[0].Classes[0].Filename != "/home/fbcbarbosa/Development/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go" {
+		t.Errorf("Wrong name, got %s", x.Packages[0].Classes[0].Name)
 	}
 }
 

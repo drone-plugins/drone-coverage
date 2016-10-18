@@ -2,6 +2,7 @@ package cobertura
 
 import (
 	"bytes"
+	"encoding/xml"
 	"io"
 	"os"
 
@@ -40,21 +41,28 @@ func (r *reader) ReadFrom(src io.Reader) ([]*cover.Profile, error) {
 	return nil, nil
 }
 
-type Cobertura struct {
-	Packages []Package
+type Coverage struct {
+	XMLName    xml.Name  `xml:"coverage"`
+	LineRate   int       `xml:"line-rate,attr"`
+	BranchRate int       `xml:"branch-rate,attr"`
+	Version    string    `xml:"version,attr"`
+	Timestamp  int64     `xml:"timestamp,attr"`
+	Packages   []Package `xml:"packages>package"`
 }
 
 type Package struct {
-	Name string
+	Name       string  `xml:"name,attr"`
+	LineRate   int     `xml:"line-rate,attr"`
+	BranchRate int     `xml:"branch-rate,attr"`
+	Complexity int     `xml:"complexity,attr"`
+	Classes    []Class `xml:"classes>class"`
 }
 
-func (r *reader) parseXML(src []byte) (Cobertura, error) {
+type Class struct {
+	Name     string `xml:"name,attr"`
+	Filename string `xml:"filename,attr"`
+}
 
-	c := Cobertura{
-		Packages: []Package{
-			{Name: "/home/fbcbarbosa/Development/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go"},
-		},
-	}
-
-	return c, nil
+func (r *reader) parseXML(src []byte) (c Coverage, err error) {
+	return c, xml.Unmarshal(src, &c)
 }
