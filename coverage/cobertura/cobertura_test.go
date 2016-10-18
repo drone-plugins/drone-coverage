@@ -18,16 +18,6 @@ func TestParse(t *testing.T) {
 	}
 }
 
-// mode: set
-// github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go:13.13,15.2 1 1
-// github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go:20.28,22.2 1 1
-// github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go:24.61,27.2 2 1
-// github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go:29.66,31.2 1 1
-// github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go:33.68,35.16 2 1
-// github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go:38.2,39.46 2 1
-// github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go:42.2,42.32 1 1
-// github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go:35.16,37.3 1 0
-// github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go:39.46,41.3 1 0
 var sampleProfiles = []*cover.Profile{
 	{
 		FileName: "github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go",
@@ -38,7 +28,7 @@ var sampleProfiles = []*cover.Profile{
 			{Count: 1, StartLine: 24, StartCol: 61, EndLine: 27, EndCol: 2, NumStmt: 2},
 			{Count: 1, StartLine: 29, StartCol: 66, EndLine: 31, EndCol: 2, NumStmt: 1},
 			{Count: 1, StartLine: 33, StartCol: 68, EndLine: 35, EndCol: 16, NumStmt: 2},
-			{Count: 1, StartLine: 38, StartCol: 3, EndLine: 39, EndCol: 46, NumStmt: 2},
+			{Count: 1, StartLine: 38, StartCol: 2, EndLine: 39, EndCol: 46, NumStmt: 2},
 			{Count: 1, StartLine: 42, StartCol: 2, EndLine: 42, EndCol: 32, NumStmt: 1},
 		},
 	},
