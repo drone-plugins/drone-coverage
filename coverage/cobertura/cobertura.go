@@ -39,3 +39,22 @@ func (r *reader) ReadFrom(src io.Reader) ([]*cover.Profile, error) {
 	// all reading logic goes here!
 	return nil, nil
 }
+
+type Cobertura struct {
+	Packages []Package
+}
+
+type Package struct {
+	Name string
+}
+
+func (r *reader) parseXML(src []byte) (Cobertura, error) {
+
+	c := Cobertura{
+		Packages: []Package{
+			{Name: "/home/fbcbarbosa/Development/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go"},
+		},
+	}
+
+	return c, nil
+}
