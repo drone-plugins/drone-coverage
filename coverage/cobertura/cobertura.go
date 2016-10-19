@@ -59,8 +59,25 @@ type Package struct {
 }
 
 type Class struct {
-	Name     string `xml:"name,attr"`
-	Filename string `xml:"filename,attr"`
+	Name       string   `xml:"name,attr"`
+	Filename   string   `xml:"filename,attr"`
+	LineRate   int      `xml:"line-rate,attr"`
+	BranchRate int      `xml:"branch-rate,attr"`
+	Complexity int      `xml:"complexity,attr"`
+	Methods    []Method `xml:"methods>method"`
+}
+
+type Method struct {
+	Name       string `xml:"name,attr"`
+	Signature  string `xml:"signature,attr"`
+	LineRate   int    `xml:"line-rate,attr"`
+	BranchRate int    `xml:"branch-rate,attr"`
+	Lines      []Line `xml:"lines>line"`
+}
+
+type Line struct {
+	Number int `xml:"number,attr"`
+	Hits   int `xml:"hits,attr"`
 }
 
 func (r *reader) parseXML(src []byte) (c Coverage, err error) {
