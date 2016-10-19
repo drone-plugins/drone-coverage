@@ -1,37 +1,23 @@
 package cobertura
 
 import (
-	"fmt"
+	"reflect"
 	"testing"
 
 	"golang.org/x/tools/cover"
 )
 
-func TestXML(t *testing.T) {
-	r := new(reader)
-	x, err := r.parseXML(sampleFile)
-
-	fmt.Println(x)
+func TestParse(t *testing.T) {
+	got, err := New().Read(sampleFile)
 
 	if err != nil {
-		t.Fatalf("Expected XML Cobertura file parsed successfully, got error %s", err)
+		t.Fatalf("Expected Go coverage profile parsed successfully, got error %s", err)
 	}
 
-	if x.Packages[0].Classes[0].Filename != "/home/fbcbarbosa/Development/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go" {
-		t.Errorf("Wrong name, got %s", x.Packages[0].Classes[0].Name)
+	if !reflect.DeepEqual(got, sampleProfiles) {
+		t.Errorf("Expected Go coverage profile matches the test fixture")
 	}
 }
-
-// func TestParse(t *testing.T) {
-// 	got, err := New().Read(sampleFile)
-// 	if err != nil {
-// 		t.Errorf("Expected Go coverage profile parsed successfully, got error %s", err)
-// 	}
-
-// 	if !reflect.DeepEqual(got, sampleProfiles) {
-// 		t.Errorf("Expected Go coverage profile matches the test fixture")
-// 	}
-// }
 
 var sampleProfiles = []*cover.Profile{
 	{
