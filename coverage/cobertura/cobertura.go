@@ -34,7 +34,7 @@ type line struct {
 }
 
 func init() {
-	coverage.Register(`<?xml version="1.0" ?>
+	coverage.Register(`<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura`, New())
 }
 

@@ -5,8 +5,22 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/drone-plugins/drone-coverage/coverage"
+
 	"golang.org/x/tools/cover"
 )
+
+func TestParseXMLToStruct(t *testing.T) {
+	c, err := parse(sampleFile)
+
+	if err != nil {
+		t.Fatalf("Expected Go cobertura parser to parse XML file successfully, got error %s", err)
+	}
+
+	if !reflect.DeepEqual(c, sampleStruct) {
+		t.Errorf("Expected Go cobertura parsed struct to match the test fixture")
+	}
+}
 
 func TestParse(t *testing.T) {
 	got, err := New().Read(sampleFile)
@@ -20,15 +34,18 @@ func TestParse(t *testing.T) {
 	}
 }
 
-func TestParseXMLToStruct(t *testing.T) {
-	c, err := parse(sampleFile)
-
-	if err != nil {
-		t.Fatalf("Expected Go cobertura parser to parse XML file successfully, got error %s", err)
+func TestSniff(t *testing.T) {
+	ok, _ := coverage.FromBytes([]byte("foo:"))
+	if ok {
+		t.Errorf("Expect sniffer does not find match")
 	}
 
-	if !reflect.DeepEqual(c, sampleStruct) {
-		t.Errorf("Expected Go cobertura parsed struct to match the test fixture")
+	ok, r := coverage.FromBytes(sampleFile)
+	if !ok {
+		t.Fatalf("Expect sniffer to find a match")
+	}
+	if _, ok := r.(*reader); !ok {
+		t.Errorf("Expect sniffer to return a Cobertura reader")
 	}
 }
 
