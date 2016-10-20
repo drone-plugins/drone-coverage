@@ -1,6 +1,7 @@
 package cobertura
 
 import (
+	"encoding/xml"
 	"io"
 	"io/ioutil"
 
@@ -8,6 +9,29 @@ import (
 
 	"golang.org/x/tools/cover"
 )
+
+type cobertura struct {
+	XMLName  xml.Name `xml:"coverage"`
+	Packages []pkg    `xml:"packages>package"`
+}
+
+type pkg struct {
+	Classes []class `xml:"classes>class"`
+}
+
+type class struct {
+	Filename string   `xml:"filename,attr"`
+	Methods  []method `xml:"methods>method"`
+}
+
+type method struct {
+	Lines []line `xml:"lines>line"`
+}
+
+type line struct {
+	Number int `xml:"number,attr"`
+	Hits   int `xml:"hits,attr"`
+}
 
 func init() {
 	coverage.Register(`<?xml version="1.0" ?>
@@ -24,7 +48,7 @@ func New() coverage.Reader {
 
 func (r *reader) Read(src []byte) ([]*cover.Profile, error) {
 
-	cov, err := Parse(src)
+	cov, err := parse(src)
 
 	if err != nil {
 		return nil, err
@@ -68,7 +92,11 @@ func (r *reader) ReadFrom(src io.Reader) ([]*cover.Profile, error) {
 	return r.Read(data)
 }
 
-func getBlocksFromMethods(methods []Method) (blocks []cover.ProfileBlock) {
+func parse(src []byte) (c cobertura, err error) {
+	return c, xml.Unmarshal(src, &c)
+}
+
+func getBlocksFromMethods(methods []method) (blocks []cover.ProfileBlock) {
 	for _, meth := range methods {
 		for _, line := range meth.Lines {
 			blocks = append(blocks, cover.ProfileBlock{

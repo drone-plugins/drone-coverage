@@ -1,6 +1,7 @@
 package cobertura
 
 import (
+	"encoding/xml"
 	"reflect"
 	"testing"
 
@@ -16,6 +17,18 @@ func TestParse(t *testing.T) {
 
 	if !reflect.DeepEqual(got, sampleProfiles) {
 		t.Errorf("Expected Go coverage profile matches the test fixture")
+	}
+}
+
+func TestParseXMLToStruct(t *testing.T) {
+	c, err := parse(sampleFile)
+
+	if err != nil {
+		t.Fatalf("Expected Go cobertura parser to parse XML file successfully, got error %s", err)
+	}
+
+	if !reflect.DeepEqual(c, sampleStruct) {
+		t.Errorf("Expected Go cobertura parsed struct to match the test fixture")
 	}
 }
 
@@ -37,6 +50,40 @@ var sampleProfiles = []*cover.Profile{
 			{Count: 0, StartLine: 40, EndLine: 40, NumStmt: 1},
 			{Count: 1, StartLine: 42, EndLine: 42, NumStmt: 1},
 		},
+	},
+}
+
+var sampleStruct = cobertura{
+	XMLName: xml.Name{Local: "coverage"},
+	Packages: []pkg{{
+		Classes: []class{
+			{
+				Filename: "/home/fbcbarbosa/Development/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go",
+				Methods: []method{
+					{Lines: []line{{Number: 14, Hits: 1}}},
+					{Lines: []line{{Number: 21, Hits: 1}}},
+				},
+			},
+			{
+				Filename: "/home/fbcbarbosa/Development/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go",
+				Methods: []method{
+					{Lines: []line{
+						{Number: 25, Hits: 1},
+						{Number: 26, Hits: 1},
+					}},
+					{Lines: []line{{Number: 30, Hits: 1}}},
+					{Lines: []line{
+						{Number: 34, Hits: 1},
+						{Number: 35, Hits: 1},
+						{Number: 36, Hits: 0},
+						{Number: 38, Hits: 1},
+						{Number: 39, Hits: 1},
+						{Number: 40, Hits: 0},
+						{Number: 42, Hits: 1},
+					}},
+				},
+			},
+		}},
 	},
 }
 
