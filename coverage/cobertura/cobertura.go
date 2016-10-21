@@ -11,12 +11,8 @@ import (
 )
 
 type cobertura struct {
-	XMLName  xml.Name `xml:"coverage"`
-	Packages []pkg    `xml:"packages>package"`
-}
-
-type pkg struct {
-	Classes []class `xml:"classes>class"`
+	XMLName xml.Name `xml:"coverage"`
+	Classes []class  `xml:"packages>package>classes>class"`
 }
 
 type class struct {
@@ -52,29 +48,27 @@ func (r *reader) Read(src []byte) ([]*cover.Profile, error) {
 
 	var profiles []*cover.Profile
 
-	for _, pkg := range cov.Packages {
-		for i, cls := range pkg.Classes {
+	for i, cls := range cov.Classes {
 
-			var blocks []cover.ProfileBlock
+		var blocks []cover.ProfileBlock
 
-			for _, line := range cls.Lines {
-				blocks = append(blocks, cover.ProfileBlock{
-					Count:     line.Hits,
-					StartLine: line.Number,
-					EndLine:   line.Number,
-					NumStmt:   1,
-				})
-			}
+		for _, line := range cls.Lines {
+			blocks = append(blocks, cover.ProfileBlock{
+				Count:     line.Hits,
+				StartLine: line.Number,
+				EndLine:   line.Number,
+				NumStmt:   1,
+			})
+		}
 
-			if i == 0 || pkg.Classes[i-1].Filename != cls.Filename {
-				prof := &cover.Profile{}
-				prof.FileName = cls.Filename
-				prof.Mode = "set"
-				prof.Blocks = append(prof.Blocks, blocks...)
-				profiles = append(profiles, prof)
-			} else {
-				profiles[i-1].Blocks = append(profiles[i-1].Blocks, blocks...)
-			}
+		if i == 0 || cov.Classes[i-1].Filename != cls.Filename {
+			prof := &cover.Profile{}
+			prof.FileName = cls.Filename
+			prof.Mode = "set"
+			prof.Blocks = append(prof.Blocks, blocks...)
+			profiles = append(profiles, prof)
+		} else {
+			profiles[i-1].Blocks = append(profiles[i-1].Blocks, blocks...)
 		}
 	}
 
