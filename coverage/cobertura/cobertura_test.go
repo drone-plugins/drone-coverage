@@ -76,32 +76,28 @@ var sampleStruct = cobertura{
 		Classes: []class{
 			{
 				Filename: "/home/fbcbarbosa/Development/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go",
-				Methods: []method{
-					{Lines: []line{{Number: 14, Hits: 1}}},
-					{Lines: []line{{Number: 21, Hits: 1}}},
+				Lines: []line{
+					{Number: 14, Hits: 1},
+					{Number: 21, Hits: 1},
 				},
 			},
 			{
 				Filename: "/home/fbcbarbosa/Development/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go",
-				Methods: []method{
-					{Lines: []line{
-						{Number: 25, Hits: 1},
-						{Number: 26, Hits: 1},
-					}},
-					{Lines: []line{{Number: 30, Hits: 1}}},
-					{Lines: []line{
-						{Number: 34, Hits: 1},
-						{Number: 35, Hits: 1},
-						{Number: 36, Hits: 0},
-						{Number: 38, Hits: 1},
-						{Number: 39, Hits: 1},
-						{Number: 40, Hits: 0},
-						{Number: 42, Hits: 1},
-					}},
+				Lines: []line{
+					{Number: 25, Hits: 1},
+					{Number: 26, Hits: 1},
+					{Number: 30, Hits: 1},
+					{Number: 34, Hits: 1},
+					{Number: 35, Hits: 1},
+					{Number: 36, Hits: 0},
+					{Number: 38, Hits: 1},
+					{Number: 39, Hits: 1},
+					{Number: 40, Hits: 0},
+					{Number: 42, Hits: 1},
 				},
 			},
-		}},
-	},
+		},
+	}},
 }
 
 var sampleFile = []byte(`<?xml version="1.0" encoding="UTF-8"?>

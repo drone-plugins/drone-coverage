@@ -20,12 +20,8 @@ type pkg struct {
 }
 
 type class struct {
-	Filename string   `xml:"filename,attr"`
-	Methods  []method `xml:"methods>method"`
-}
-
-type method struct {
-	Lines []line `xml:"lines>line"`
+	Filename string `xml:"filename,attr"`
+	Lines    []line `xml:"lines>line"`
 }
 
 type line struct {
@@ -59,7 +55,16 @@ func (r *reader) Read(src []byte) ([]*cover.Profile, error) {
 	for _, pkg := range cov.Packages {
 		for i, cls := range pkg.Classes {
 
-			blocks := getBlocksFromMethods(cls.Methods)
+			var blocks []cover.ProfileBlock
+
+			for _, line := range cls.Lines {
+				blocks = append(blocks, cover.ProfileBlock{
+					Count:     line.Hits,
+					StartLine: line.Number,
+					EndLine:   line.Number,
+					NumStmt:   1,
+				})
+			}
 
 			if i == 0 || pkg.Classes[i-1].Filename != cls.Filename {
 				prof := &cover.Profile{}
@@ -94,18 +99,4 @@ func (r *reader) ReadFrom(src io.Reader) ([]*cover.Profile, error) {
 
 func parse(src []byte) (c cobertura, err error) {
 	return c, xml.Unmarshal(src, &c)
-}
-
-func getBlocksFromMethods(methods []method) (blocks []cover.ProfileBlock) {
-	for _, meth := range methods {
-		for _, line := range meth.Lines {
-			blocks = append(blocks, cover.ProfileBlock{
-				Count:     line.Hits,
-				StartLine: line.Number,
-				EndLine:   line.Number,
-				NumStmt:   1,
-			})
-		}
-	}
-	return
 }
