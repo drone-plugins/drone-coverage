@@ -67,7 +67,7 @@ var sampleFile = []byte(`<?xml version="1.0" encoding="UTF-8"?>
 	<packages>
 		<package name="github.com/drone-plugins/drone-coverage/coverage/gocov" line-rate="0" branch-rate="0" complexity="0">
 			<classes>
-				<class name="-" filename="/home/fbcbarbosa/Development/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go" line-rate="0" branch-rate="0" complexity="0">
+				<class name="-" filename="/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go" line-rate="0" branch-rate="0" complexity="0">
 					<methods>
 						<method name="init" signature="" line-rate="0" branch-rate="0">
 							<lines>
@@ -85,7 +85,7 @@ var sampleFile = []byte(`<?xml version="1.0" encoding="UTF-8"?>
 						<line number="21" hits="1"></line>
 					</lines>
 				</class>
-				<class name="reader" filename="/home/fbcbarbosa/Development/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go" line-rate="0" branch-rate="0" complexity="0">
+				<class name="reader" filename="/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go" line-rate="0" branch-rate="0" complexity="0">
 					<methods>
 						<method name="Read" signature="" line-rate="0" branch-rate="0">
 							<lines>
@@ -130,7 +130,7 @@ var sampleFile = []byte(`<?xml version="1.0" encoding="UTF-8"?>
 
 var sampleProfiles = []*cover.Profile{
 	{
-		FileName: "/home/fbcbarbosa/Development/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go",
+		FileName: "/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go",
 		Mode:     "set",
 		Blocks: []cover.ProfileBlock{
 			{Count: 1, StartLine: 14, EndLine: 14, NumStmt: 1},
@@ -153,14 +153,14 @@ var sampleStruct = cobertura{
 	XMLName: xml.Name{Local: "coverage"},
 	Classes: []class{
 		{
-			Filename: "/home/fbcbarbosa/Development/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go",
+			Filename: "/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go",
 			Lines: []line{
 				{Number: 14, Hits: 1},
 				{Number: 21, Hits: 1},
 			},
 		},
 		{
-			Filename: "/home/fbcbarbosa/Development/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go",
+			Filename: "/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go",
 			Lines: []line{
 				{Number: 25, Hits: 1},
 				{Number: 26, Hits: 1},
