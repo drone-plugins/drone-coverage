@@ -26,6 +26,8 @@ type line struct {
 }
 
 func init() {
+	coverage.Register(`<?xml version="1.0">
+<!DOCTYPE coverage SYSTEM "http://cobertura`, New())
 	coverage.Register(`<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura`, New())
 }
@@ -61,7 +63,9 @@ func (r *reader) Read(src []byte) ([]*cover.Profile, error) {
 			})
 		}
 
-		if i == 0 || cov.Classes[i-1].Filename != cls.Filename {
+		isNewFile := i == 0 || cov.Classes[i-1].Filename != cls.Filename
+
+		if isNewFile {
 			prof := &cover.Profile{}
 			prof.FileName = cls.Filename
 			prof.Mode = "set"
