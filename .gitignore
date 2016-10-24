@@ -24,5 +24,7 @@ _testmain.go
 *.prof
 .env
 
-coverage.out
+*.swp
+coverage*.out
+coverage.xml
 drone-coverage
