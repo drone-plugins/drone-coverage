@@ -285,7 +285,10 @@ func percentCovered(p *cover.Profile) (int64, int64, float64) {
 
 // newClient returns a new coverage server client.
 func newClient(server, cert, token string) client.Client {
-	pool := x509.NewCertPool()
+	pool, err := x509.SystemCertPool()
+	if err != nil {
+		pool = x509.NewCertPool()
+	}
 	conf := &tls.Config{RootCAs: pool}
 	pem, _ := ioutil.ReadFile(cert)
 	if len(pem) != 0 {
