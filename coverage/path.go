@@ -1,21 +1,11 @@
 package coverage
 
-import (
-	"fmt"
-	"path"
-	"strings"
-)
+import "fmt"
 
+// PathPrefix finds the prefix relative to the base with the curr value.
+// It will search the base to find the commonality or return an error if there
+// is none.
 func PathPrefix(curr string, base string) (string, error) {
-	// Check for absolute paths first
-	if path.IsAbs(curr) {
-		if !strings.HasPrefix(curr, base) {
-			return "", fmt.Errorf("Path %s not found in %s", curr, base)
-		}
-
-		return base, nil
-	}
-
 	cBytes := []byte(curr)
 	bBytes := []byte(base)
 	count := len(bBytes)

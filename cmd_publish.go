@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path"
 	"strings"
 	"time"
 
@@ -240,24 +241,34 @@ func findFileReferences(report *client.Report, base string) {
 	// also ignore any files outside of the directory
 	for _, file := range report.Files {
 		fileName := file.FileName
+		var prefix string
 
-		// see if the file is present
-		if _, err := os.Stat(fileName); os.IsNotExist(err) {
-			logrus.Debugf("File not directly found on disk")
-
-			// see if the path can be determined
-			prefix, err := coverage.PathPrefix(file.FileName, base)
-
-			if err != nil {
+		if path.IsAbs(fileName) {
+			if !strings.HasPrefix(fileName, base) {
 				logrus.Warningf("File referenced in coverage not found at %s", fileName)
 				continue
 			}
 
-			file.FileName = strings.TrimPrefix(fileName, prefix)
-			logrus.Debugf("Prefix %s found", prefix)
+			prefix = base
+		} else if _, err := os.Stat(fileName); err == nil {
+			logrus.Debugf("File found at relative path %s", fileName)
+
+			prefix = ""
+		} else {
+			var err error
+			prefix, err = coverage.PathPrefix(fileName, base)
+
+			if err != nil {
+				// See if file is on disk
+				logrus.Warningf("File referenced in coverage not found at %s", fileName)
+				continue
+			}
+
+			logrus.Debugf("Found common path at %s", prefix)
 		}
 
 		// Add the file to the report
+		file.FileName = strings.TrimPrefix(fileName, prefix)
 		files = append(files, file)
 	}
 
