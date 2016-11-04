@@ -5,6 +5,8 @@ import (
 	"crypto/x509"
 	"fmt"
 	"io/ioutil"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/Sirupsen/logrus"
@@ -110,6 +112,11 @@ var PublishCmd = cli.Command{
 			Name:  "env-file",
 			Usage: "source env file",
 		},
+		cli.StringFlag{
+			Name:   "trim-prefix",
+			Usage:  "trim prefix from coverage files",
+			EnvVar: "PLUGIN_TRIM_PREFIX",
+		},
 	},
 	Action: func(c *cli.Context) error {
 		return publish(c)
@@ -164,23 +171,22 @@ func publish(c *cli.Context) error {
 		Timestamp: time.Now().UTC().Unix(),
 	}
 
-	// this code attempts we use the relative path to the
-	// project instead of an absoluate path. We should probably
-	// just exclude anything not in the repository workspace ...
-	// for _, file := range report.Files {
-	// 	// convert from absolute to relative path
-	// 	file.FileName = strings.TrimPrefix(
-	// 		file.FileName,
-	// 		w.Path,
-	// 	)
-	// 	// convert from gopath to relative path
-	// 	file.FileName = strings.TrimPrefix(
-	// 		file.FileName,
-	// 		strings.TrimPrefix(w.Path, "/drone/src/"),
-	// 	)
-	// 	// remove report prefix
-	// 	file.FileName = strings.TrimPrefix(file.FileName, "/")
-	// }
+	// get the base directory
+	base := c.String("trim.prefix")
+
+	if len(base) == 0 {
+		base, err = os.Getwd()
+
+		if err != nil {
+			return err
+		}
+
+		logrus.Debug("Using current working directory")
+	}
+
+	logrus.Debugf("Base directory is %s", base)
+
+	findFileReferences(report, base)
 
 	var (
 		repo   = c.String("repo.fullname")
@@ -225,6 +231,37 @@ func publish(c *cli.Context) error {
 	}
 
 	return nil
+}
+
+func findFileReferences(report *client.Report, base string) {
+	var files []*client.File
+
+	// normalize the file path based on the working directory
+	// also ignore any files outside of the directory
+	for _, file := range report.Files {
+		fileName := file.FileName
+
+		// see if the file is present
+		if _, err := os.Stat(fileName); os.IsNotExist(err) {
+			logrus.Debugf("File not directly found on disk")
+
+			// see if the path can be determined
+			prefix, err := coverage.PathPrefix(file.FileName, base)
+
+			if err != nil {
+				logrus.Warningf("File referenced in coverage not found at %s", fileName)
+				continue
+			}
+
+			file.FileName = strings.TrimPrefix(fileName, prefix)
+			logrus.Debugf("Prefix %s found", prefix)
+		}
+
+		// Add the file to the report
+		files = append(files, file)
+	}
+
+	report.Files = files
 }
 
 // profileToReport is a helper function that converts the merged coverage
