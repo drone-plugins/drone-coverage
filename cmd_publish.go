@@ -5,6 +5,8 @@ import (
 	"crypto/x509"
 	"fmt"
 	"io/ioutil"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/Sirupsen/logrus"
@@ -164,23 +166,27 @@ func publish(c *cli.Context) error {
 		Timestamp: time.Now().UTC().Unix(),
 	}
 
-	// this code attempts we use the relative path to the
-	// project instead of an absoluate path. We should probably
-	// just exclude anything not in the repository workspace ...
-	// for _, file := range report.Files {
-	// 	// convert from absolute to relative path
-	// 	file.FileName = strings.TrimPrefix(
-	// 		file.FileName,
-	// 		w.Path,
-	// 	)
-	// 	// convert from gopath to relative path
-	// 	file.FileName = strings.TrimPrefix(
-	// 		file.FileName,
-	// 		strings.TrimPrefix(w.Path, "/drone/src/"),
-	// 	)
-	// 	// remove report prefix
-	// 	file.FileName = strings.TrimPrefix(file.FileName, "/")
-	// }
+	// get the working directory
+	pwd, err := os.Getwd()
+
+	if err != nil {
+		return err
+	}
+
+	var files []*client.File
+
+	// normalize the file path based on the working directory
+	// also ignore any files outside of the directory
+	for _, file := range report.Files {
+		prefix, err := coverage.PathPrefix(file.FileName, pwd)
+
+		if err == nil {
+			file.FileName = strings.TrimPrefix(file.FileName, prefix)
+			files = append(files, file)
+		}
+	}
+
+	report.Files = files
 
 	var (
 		repo   = c.String("repo.fullname")
