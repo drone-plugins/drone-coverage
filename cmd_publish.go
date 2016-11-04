@@ -112,6 +112,11 @@ var PublishCmd = cli.Command{
 			Name:  "env-file",
 			Usage: "source env file",
 		},
+		cli.StringFlag{
+			Name:   "trim-prefix",
+			Usage:  "trim prefix from coverage files",
+			EnvVar: "PLUGIN_TRIM_PREFIX",
+		},
 	},
 	Action: func(c *cli.Context) error {
 		return publish(c)
@@ -166,27 +171,22 @@ func publish(c *cli.Context) error {
 		Timestamp: time.Now().UTC().Unix(),
 	}
 
-	// get the working directory
-	pwd, err := os.Getwd()
+	// get the base directory
+	base := c.String("trim.prefix")
 
-	if err != nil {
-		return err
-	}
+	if len(base) == 0 {
+		base, err = os.Getwd()
 
-	var files []*client.File
-
-	// normalize the file path based on the working directory
-	// also ignore any files outside of the directory
-	for _, file := range report.Files {
-		prefix, err := coverage.PathPrefix(file.FileName, pwd)
-
-		if err == nil {
-			file.FileName = strings.TrimPrefix(file.FileName, prefix)
-			files = append(files, file)
+		if err != nil {
+			return err
 		}
+
+		logrus.Debug("Using current working directory")
 	}
 
-	report.Files = files
+	logrus.Debugf("Base directory is %s", base)
+
+	findFileReferences(report, base)
 
 	var (
 		repo   = c.String("repo.fullname")
@@ -231,6 +231,37 @@ func publish(c *cli.Context) error {
 	}
 
 	return nil
+}
+
+func findFileReferences(report *client.Report, base string) {
+	var files []*client.File
+
+	// normalize the file path based on the working directory
+	// also ignore any files outside of the directory
+	for _, file := range report.Files {
+		fileName := file.FileName
+
+		// see if the file is present
+		if _, err := os.Stat(fileName); os.IsNotExist(err) {
+			logrus.Debugf("File not directly found on disk")
+
+			// see if the path can be determined
+			prefix, err := coverage.PathPrefix(file.FileName, base)
+
+			if err != nil {
+				logrus.Warningf("File referenced in coverage not found at %s", fileName)
+				continue
+			}
+
+			file.FileName = strings.TrimPrefix(fileName, prefix)
+			logrus.Debugf("Prefix %s found", prefix)
+		}
+
+		// Add the file to the report
+		files = append(files, file)
+	}
+
+	report.Files = files
 }
 
 // profileToReport is a helper function that converts the merged coverage
