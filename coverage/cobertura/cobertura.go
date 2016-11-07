@@ -30,6 +30,10 @@ func init() {
 <!DOCTYPE coverage SYSTEM "http://cobertura`, New())
 	coverage.Register(`<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura`, New())
+	coverage.Register(`<?xml version="1.0" ?>
+<coverage`, New())
+	coverage.Register(`<?xml version="1.0" encoding="UTF-8"?>
+<coverage`, New())
 }
 
 type reader struct {
