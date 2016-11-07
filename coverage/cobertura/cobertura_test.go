@@ -153,14 +153,14 @@ var sampleStruct = cobertura{
 	XMLName: xml.Name{Local: "coverage"},
 	Classes: []class{
 		{
-			Filename: "/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go",
+			FileName: "/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go",
 			Lines: []line{
 				{Number: 14, Hits: 1},
 				{Number: 21, Hits: 1},
 			},
 		},
 		{
-			Filename: "/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go",
+			FileName: "/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go",
 			Lines: []line{
 				{Number: 25, Hits: 1},
 				{Number: 26, Hits: 1},

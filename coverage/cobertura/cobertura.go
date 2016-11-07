@@ -1,9 +1,11 @@
 package cobertura
 
 import (
+	"bufio"
 	"encoding/xml"
 	"io"
 	"io/ioutil"
+	"os"
 
 	"github.com/drone-plugins/drone-coverage/coverage"
 
@@ -16,7 +18,7 @@ type cobertura struct {
 }
 
 type class struct {
-	Filename string `xml:"filename,attr"`
+	FileName string `xml:"filename,attr"`
 	Lines    []line `xml:"lines>line"`
 }
 
@@ -57,24 +59,33 @@ func (r *reader) Read(src []byte) ([]*cover.Profile, error) {
 	for i, cls := range cov.Classes {
 
 		var blocks []cover.ProfileBlock
+		cols := calculateCols(cls.FileName)
 
 		for _, line := range cls.Lines {
-			blocks = append(blocks, cover.ProfileBlock{
+			block := cover.ProfileBlock{
 				Count:     line.Hits,
 				StartLine: line.Number,
 				EndLine:   line.Number,
 				NumStmt:   1,
-			})
+			}
+
+			if len(cols) != 0 {
+				block.StartCol = 1
+				block.EndCol = cols[line.Number]
+			}
+
+			blocks = append(blocks, block)
 		}
 
-		isNewFile := i == 0 || cov.Classes[i-1].Filename != cls.Filename
+		isNewFile := i == 0 || cov.Classes[i-1].FileName != cls.FileName
 
 		if isNewFile {
-			prof := &cover.Profile{}
-			prof.FileName = cls.Filename
-			prof.Mode = "set"
-			prof.Blocks = append(prof.Blocks, blocks...)
-			profiles = append(profiles, prof)
+			profile := &cover.Profile{}
+
+			profile.FileName = cls.FileName
+			profile.Mode = "set"
+			profile.Blocks = append(profile.Blocks, blocks...)
+			profiles = append(profiles, profile)
 		} else {
 			profiles[i-1].Blocks = append(profiles[i-1].Blocks, blocks...)
 		}
@@ -101,4 +112,22 @@ func (r *reader) ReadFrom(src io.Reader) ([]*cover.Profile, error) {
 
 func parse(src []byte) (c cobertura, err error) {
 	return c, xml.Unmarshal(src, &c)
+}
+
+// this is a helper function that is able to calculate the number of columns
+func calculateCols(fileName string) []int {
+	var lines []int
+
+	f, err := os.Open(fileName)
+	if err != nil {
+		return lines
+	}
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		cols := len(scanner.Bytes())
+		lines = append(lines, cols)
+	}
+	return lines
 }
