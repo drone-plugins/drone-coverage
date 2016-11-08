@@ -5,6 +5,9 @@ import (
 	"crypto/x509"
 	"fmt"
 	"io/ioutil"
+	"os"
+	"path"
+	"strings"
 	"time"
 
 	"github.com/Sirupsen/logrus"
@@ -110,6 +113,11 @@ var PublishCmd = cli.Command{
 			Name:  "env-file",
 			Usage: "source env file",
 		},
+		cli.StringFlag{
+			Name:   "trim-prefix",
+			Usage:  "trim prefix from coverage files",
+			EnvVar: "PLUGIN_TRIM_PREFIX",
+		},
 	},
 	Action: func(c *cli.Context) error {
 		return publish(c)
@@ -164,23 +172,22 @@ func publish(c *cli.Context) error {
 		Timestamp: time.Now().UTC().Unix(),
 	}
 
-	// this code attempts we use the relative path to the
-	// project instead of an absoluate path. We should probably
-	// just exclude anything not in the repository workspace ...
-	// for _, file := range report.Files {
-	// 	// convert from absolute to relative path
-	// 	file.FileName = strings.TrimPrefix(
-	// 		file.FileName,
-	// 		w.Path,
-	// 	)
-	// 	// convert from gopath to relative path
-	// 	file.FileName = strings.TrimPrefix(
-	// 		file.FileName,
-	// 		strings.TrimPrefix(w.Path, "/drone/src/"),
-	// 	)
-	// 	// remove report prefix
-	// 	file.FileName = strings.TrimPrefix(file.FileName, "/")
-	// }
+	// get the base directory
+	base := c.String("trim.prefix")
+
+	if len(base) == 0 {
+		base, err = os.Getwd()
+
+		if err != nil {
+			return err
+		}
+
+		logrus.Debug("Using current working directory")
+	}
+
+	logrus.Debugf("Base directory is %s", base)
+
+	findFileReferences(report, base)
 
 	var (
 		repo   = c.String("repo.fullname")
@@ -225,6 +232,47 @@ func publish(c *cli.Context) error {
 	}
 
 	return nil
+}
+
+func findFileReferences(report *client.Report, base string) {
+	var files []*client.File
+
+	// normalize the file path based on the working directory
+	// also ignore any files outside of the directory
+	for _, file := range report.Files {
+		fileName := file.FileName
+		var prefix string
+
+		if path.IsAbs(fileName) {
+			if !strings.HasPrefix(fileName, base) {
+				logrus.Warningf("File referenced in coverage not found at %s", fileName)
+				continue
+			}
+
+			prefix = base
+		} else if _, err := os.Stat(fileName); err == nil {
+			logrus.Debugf("File found at relative path %s", fileName)
+
+			prefix = ""
+		} else {
+			var err error
+			prefix, err = coverage.PathPrefix(fileName, base)
+
+			if err != nil {
+				// See if file is on disk
+				logrus.Warningf("File referenced in coverage not found at %s", fileName)
+				continue
+			}
+
+			logrus.Debugf("Found common path at %s", prefix)
+		}
+
+		// Add the file to the report
+		file.FileName = strings.TrimPrefix(fileName, prefix)
+		files = append(files, file)
+	}
+
+	report.Files = files
 }
 
 // profileToReport is a helper function that converts the merged coverage
@@ -285,7 +333,10 @@ func percentCovered(p *cover.Profile) (int64, int64, float64) {
 
 // newClient returns a new coverage server client.
 func newClient(server, cert, token string) client.Client {
-	pool := x509.NewCertPool()
+	pool, err := x509.SystemCertPool()
+	if err != nil {
+		pool = x509.NewCertPool()
+	}
 	conf := &tls.Config{RootCAs: pool}
 	pem, _ := ioutil.ReadFile(cert)
 	if len(pem) != 0 {
