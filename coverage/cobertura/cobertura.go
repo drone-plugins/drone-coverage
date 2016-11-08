@@ -71,7 +71,7 @@ func (r *reader) Read(src []byte) ([]*cover.Profile, error) {
 
 			if len(cols) != 0 {
 				block.StartCol = 1
-				block.EndCol = cols[line.Number]
+				block.EndCol = cols[line.Number-1]
 			}
 
 			blocks = append(blocks, block)
@@ -126,7 +126,7 @@ func calculateCols(fileName string) []int {
 
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
-		cols := len(scanner.Bytes())
+		cols := len(scanner.Bytes()) + 1
 		lines = append(lines, cols)
 	}
 	return lines
