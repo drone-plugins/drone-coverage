@@ -1,5 +1,6 @@
 workspace:
   base: /go
+  path: src/github.com/drone-plugins/drone-coverage
 
 pipeline:
   test:
@@ -8,7 +9,11 @@ pipeline:
       - CGO_ENABLED=0
     commands:
       - go vet
-      - go test -coverprofile=coverage.out
+      - |
+        for pkg in $(go list ./... | grep -v /vendor/)
+        do  
+          go test -cover -coverprofile $GOPATH/src/$pkg/coverage.out $pkg || exit 1
+        done
       - go build -ldflags "-s -w -X main.build=$DRONE_BUILD_NUMBER" -a -tags netgo
 
   coverage:
