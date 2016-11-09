@@ -9,12 +9,12 @@ pipeline:
       - CGO_ENABLED=0
     commands:
       - go vet
+      - go build -ldflags "-s -w -X main.build=$DRONE_BUILD_NUMBER" -a -tags netgo
       - |
         for pkg in $(go list ./... | grep -v /vendor/)
         do  
           go test -cover -coverprofile $GOPATH/src/$pkg/coverage.out $pkg || exit 1
         done
-      - go build -ldflags "-s -w -X main.build=$DRONE_BUILD_NUMBER" -a -tags netgo
 
   coverage:
     image: plugins/coverage
