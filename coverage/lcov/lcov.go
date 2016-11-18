@@ -79,8 +79,8 @@ func (r *reader) ReadFrom(src io.Reader) ([]*cover.Profile, error) {
 			block.Count = count
 
 			if len(cols) != 0 {
-				block.StartCol = 1
-				block.EndCol = cols[line-1]
+				block.StartCol = 0
+				block.EndCol = cols[line]
 			}
 
 			profile.Blocks = append(profile.Blocks, block)
