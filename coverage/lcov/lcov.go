@@ -78,7 +78,7 @@ func (r *reader) ReadFrom(src io.Reader) ([]*cover.Profile, error) {
 			block.EndLine = line
 			block.Count = count
 
-			if len(cols) != 0 {
+			if len(cols) != 0 && line > 0 {
 				block.StartCol = 1
 				block.EndCol = cols[line-1]
 			}
