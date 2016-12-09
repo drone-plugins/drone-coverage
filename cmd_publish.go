@@ -107,7 +107,7 @@ var PublishCmd = cli.Command{
 		cli.StringFlag{
 			Name:   "token",
 			Usage:  "github token",
-			EnvVar: "GITHUB_TOKEN",
+			EnvVar: "PLUGIN_TOKEN,GITHUB_TOKEN",
 		},
 		cli.StringFlag{
 			Name:  "env-file",
