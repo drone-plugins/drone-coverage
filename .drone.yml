@@ -8,6 +8,7 @@ pipeline:
     environment:
       - CGO_ENABLED=0
     commands:
+      - go get
       - go vet
       - |
         for pkg in $(go list ./... | grep -v /vendor/)
