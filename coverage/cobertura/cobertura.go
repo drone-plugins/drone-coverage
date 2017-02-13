@@ -36,6 +36,8 @@ func init() {
 <coverage`, New())
 	coverage.Register(`<?xml version="1.0" encoding="UTF-8"?>
 <coverage`, New())
+	coverage.Register(`<?xml version="1.0" encoding="UTF-8"?>
+<testsuite`, New())
 }
 
 type reader struct {
