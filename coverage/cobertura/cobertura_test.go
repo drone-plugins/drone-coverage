@@ -4,7 +4,6 @@ import (
 	"encoding/xml"
 	"reflect"
 	"testing"
-	"fmt"
 
 	"github.com/drone-plugins/drone-coverage/coverage"
 
@@ -28,14 +27,6 @@ func TestParseGolangToCobertura(t *testing.T) {
 
 	if err != nil {
 		t.Fatalf("Expected Go coverage profile parsed successfully, got error %s", err)
-	}
-
-	for i, g := range got {
-			for j, _ := range g.Blocks {
-				fmt.Printf("exp: %+v\n", sampleGolangToCoberturaProfile[i].Blocks[j])
-				fmt.Printf("act: %+v\n", got[i].Blocks[j])
-				fmt.Println("----------")
-			}
 	}
 
 	if !reflect.DeepEqual(got, sampleGolangToCoberturaProfile) {
