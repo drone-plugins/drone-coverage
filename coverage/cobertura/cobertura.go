@@ -28,14 +28,27 @@ type line struct {
 }
 
 func init() {
-	coverage.Register(`<?xml version="1.0">
+	coverage.Register(`<?xml version="1.0"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura`, New())
+
 	coverage.Register(`<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura`, New())
-	coverage.Register(`<?xml version="1.0" ?>
+
+	coverage.Register(`<?xml version="1.0"?>
+<!--DOCTYPE coverage SYSTEM "http://cobertura`, New())
+
+	coverage.Register(`<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE coverage SYSTEM "http://cobertura`, New())
+
+	coverage.Register(`<?xml version="1.0"?>
 <coverage`, New())
+
 	coverage.Register(`<?xml version="1.0" encoding="UTF-8"?>
 <coverage`, New())
+
+	coverage.Register(`<?xml version="1.0"?>
+<testsuite`, New())
+
 	coverage.Register(`<?xml version="1.0" encoding="UTF-8"?>
 <testsuite`, New())
 }
