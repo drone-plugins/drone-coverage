@@ -11,8 +11,8 @@ import (
 	"time"
 
 	"github.com/Sirupsen/logrus"
-	"github.com/drone-plugins/drone-coverage/client"
-	"github.com/drone-plugins/drone-coverage/coverage"
+	"github.com/param108/drone-coverage/client"
+	"github.com/param108/drone-coverage/coverage"
 	"github.com/joho/godotenv"
 	"github.com/mattn/go-zglob"
 	"github.com/urfave/cli"
