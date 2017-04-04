@@ -5,6 +5,8 @@ import (
 	"reflect"
 	"testing"
 
+	"fmt"
+
 	"github.com/drone-plugins/drone-coverage/coverage"
 	"golang.org/x/tools/cover"
 )
@@ -29,6 +31,8 @@ func TestParseGolangToCobertura(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(got, sampleGolangToCoberturaProfile) {
+		fmt.Println(got[0])
+		fmt.Println(sampleGolangToCoberturaProfile[0])
 		t.Errorf("Expected Go coverage profile to match the test fixture")
 	}
 }
