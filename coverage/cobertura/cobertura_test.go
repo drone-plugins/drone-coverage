@@ -29,7 +29,7 @@ func TestParseGolangToCobertura(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(got, sampleGolangToCoberturaProfile) {
-		t.Errorf("Expected Go coverage profile matches the test fixture")
+		t.Errorf("Expected Go coverage profile to match the test fixture")
 	}
 }
 
@@ -41,7 +41,7 @@ func TestParsePythonCoverage(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(got, sampleJunitCoverageProfile) {
-		t.Errorf("Expected Go coverage profile matches the test fixture")
+		t.Errorf("Expected Go coverage profile to match the test fixture")
 	}
 }
 
@@ -72,9 +72,9 @@ var sampleGolangToCobertura = []byte(`<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura.sourceforge.net/xml/coverage-03.dtd">
 <coverage line-rate="0" branch-rate="0" version="" timestamp="1476758263048">
 	<packages>
-		<package name="github.com/drone-plugins/drone-coverage/coverage/gocov" line-rate="0" branch-rate="0" complexity="0">
+		<package name="custom/package/sample" line-rate="0" branch-rate="0" complexity="0">
 			<classes>
-				<class name="-" filename="/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go" line-rate="0" branch-rate="0" complexity="0">
+				<class name="-" filename="/custom/path/samplefile.go" line-rate="0" branch-rate="0" complexity="0">
 					<methods>
 						<method name="init" signature="" line-rate="0" branch-rate="0">
 							<lines>
@@ -92,7 +92,7 @@ var sampleGolangToCobertura = []byte(`<?xml version="1.0" encoding="UTF-8"?>
 						<line number="21" hits="1"></line>
 					</lines>
 				</class>
-				<class name="reader" filename="/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go" line-rate="0" branch-rate="0" complexity="0">
+				<class name="reader" filename="/custom/path/samplefile.go" line-rate="0" branch-rate="0" complexity="0">
 					<methods>
 						<method name="Read" signature="" line-rate="0" branch-rate="0">
 							<lines>
@@ -137,7 +137,7 @@ var sampleGolangToCobertura = []byte(`<?xml version="1.0" encoding="UTF-8"?>
 
 var sampleGolangToCoberturaProfile = []*cover.Profile{
 	{
-		FileName: "/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go",
+		FileName: "/custom/path/samplefile.go",
 		Mode:     "set",
 		Blocks: []cover.ProfileBlock{
 			{Count: 1, StartLine: 14, StartCol: 0, EndLine: 14, EndCol: 0, NumStmt: 1},
@@ -160,14 +160,14 @@ var sampleGolangToCoberturaStructs = cobertura{
 	XMLName: xml.Name{Local: "coverage"},
 	Classes: []class{
 		{
-			FileName: "/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go",
+			FileName: "/custom/path/samplefile.go",
 			Lines: []line{
 				{Number: 14, Hits: 1},
 				{Number: 21, Hits: 1},
 			},
 		},
 		{
-			FileName: "/go/src/github.com/drone-plugins/drone-coverage/coverage/gocov/gocov.go",
+			FileName: "/custom/path/samplefile.go",
 			Lines: []line{
 				{Number: 25, Hits: 1},
 				{Number: 26, Hits: 1},
