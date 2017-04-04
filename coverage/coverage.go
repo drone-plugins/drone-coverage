@@ -71,6 +71,7 @@ func FromFile(path string) (bool, Reader) {
 	if err != nil {
 		return false, nil
 	}
+	defer f.Close()
 	r := io.LimitReader(f, sniffLen)
 	b, err := ioutil.ReadAll(r)
 	if err != nil {
