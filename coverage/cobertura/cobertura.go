@@ -11,49 +11,42 @@ import (
 	"golang.org/x/tools/cover"
 )
 
-type cobertura struct {
-	XMLName xml.Name `xml:"coverage"`
-	Classes []class  `xml:"packages>package>classes>class"`
-}
-
-type class struct {
-	FileName string `xml:"filename,attr"`
-	Lines    []line `xml:"lines>line"`
-}
-
-type line struct {
-	Number int `xml:"number,attr"`
-	Hits   int `xml:"hits,attr"`
-}
-
 func init() {
 	coverage.Register(`<?xml version="1.0"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura`, New())
-
 	coverage.Register(`<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE coverage SYSTEM "http://cobertura`, New())
-
 	coverage.Register(`<?xml version="1.0"?>
 <!--DOCTYPE coverage SYSTEM "http://cobertura`, New())
-
 	coverage.Register(`<?xml version="1.0" encoding="UTF-8"?>
 <!--DOCTYPE coverage SYSTEM "http://cobertura`, New())
-
 	coverage.Register(`<?xml version="1.0"?>
 <coverage`, New())
-
 	coverage.Register(`<?xml version="1.0" encoding="UTF-8"?>
 <coverage`, New())
-
 	coverage.Register(`<?xml version="1.0" ?>
 <coverage`, New())
-
 	coverage.Register(`<?xml version="1.0" encoding="UTF-8" ?>
 <coverage`, New())
 }
 
-type reader struct {
-}
+type reader struct{}
+
+// structs for parsing xml cobertura files
+type (
+	cobertura struct {
+		XMLName xml.Name `xml:"coverage"`
+		Classes []class  `xml:"packages>package>classes>class"`
+	}
+	class struct {
+		FileName string `xml:"filename,attr"`
+		Lines    []line `xml:"lines>line"`
+	}
+	line struct {
+		Number int `xml:"number,attr"`
+		Hits   int `xml:"hits,attr"`
+	}
+)
 
 // New returns a new Reader for reading and parsing a Cobertura report.
 func New() coverage.Reader {
@@ -61,7 +54,6 @@ func New() coverage.Reader {
 }
 
 func (r *reader) Read(src []byte) ([]*cover.Profile, error) {
-
 	cov, err := parse(src)
 
 	if err != nil {
@@ -71,7 +63,6 @@ func (r *reader) Read(src []byte) ([]*cover.Profile, error) {
 	var profiles []*cover.Profile
 
 	for i, cls := range cov.Classes {
-
 		var blocks []cover.ProfileBlock
 		cols := calculateCols(cls.FileName)
 
@@ -95,7 +86,6 @@ func (r *reader) Read(src []byte) ([]*cover.Profile, error) {
 
 		if isNewFile {
 			profile := &cover.Profile{}
-
 			profile.FileName = cls.FileName
 			profile.Mode = "set"
 			profile.Blocks = append(profile.Blocks, blocks...)
