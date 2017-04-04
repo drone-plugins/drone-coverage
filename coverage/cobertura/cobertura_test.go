@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/drone-plugins/drone-coverage/coverage"
-
 	"golang.org/x/tools/cover"
 )
 
