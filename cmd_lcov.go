@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/drone-plugins/drone-coverage/coverage/lcov"
+	"github.com/param108/drone-coverage/coverage/lcov"
 	"github.com/mattn/go-zglob"
 	"github.com/urfave/cli"
 	"golang.org/x/tools/cover"

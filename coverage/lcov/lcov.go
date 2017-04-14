@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/drone-plugins/drone-coverage/coverage"
+	"github.com/param108/drone-coverage/coverage"
 	"golang.org/x/tools/cover"
 )
 
