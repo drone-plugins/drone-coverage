@@ -3,40 +3,146 @@ workspace:
   path: src/github.com/drone-plugins/drone-coverage
 
 pipeline:
+  deps:
+    image: golang:1.10
+    pull: true
+    commands:
+      - go get -u github.com/golang/dep/cmd/dep
+      - dep ensure
+
   test:
-    image: golang:1.7
+    image: golang:1.10
+    pull: true
+    commands:
+      - go vet ./...
+      - go test -cover ./...
+
+  build_linux_amd64:
+    image: golang:1.10
+    pull: true
+    group: build
     environment:
+      - GOOS=linux
+      - GOARCH=amd64
       - CGO_ENABLED=0
     commands:
-      - go get
-      - go vet
       - |
-        for pkg in $(go list ./... | grep -v /vendor/)
-        do  
-          go test -cover -coverprofile $GOPATH/src/$pkg/coverage.out $pkg || exit 1
-        done
-      - go build -ldflags "-s -w -X main.build=$DRONE_BUILD_NUMBER" -a -tags netgo
+        if test "${DRONE_TAG}" = ""; then
+          go build -v -ldflags "-X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/amd64/drone-coverage
+        else
+          go build -v -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/amd64/drone-coverage
+        fi
 
-  coverage:
-    image: plugins/coverage
-    server: https://aircover.co
-    pattern: coverage.out
+  build_linux_i386:
+    image: golang:1.10
+    pull: true
+    group: build
+    environment:
+      - GOOS=linux
+      - GOARCH=386
+      - CGO_ENABLED=0
+    commands:
+      - |
+        if test "${DRONE_TAG}" = ""; then
+          go build -v -ldflags "-X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/i386/drone-coverage
+        else
+          go build -v -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/i386/drone-coverage
+        fi
 
-  latest:
-    image: plugins/docker
+  build_linux_arm64:
+    image: golang:1.10
+    pull: true
+    group: build
+    environment:
+      - GOOS=linux
+      - GOARCH=arm64
+      - CGO_ENABLED=0
+    commands:
+      - |
+        if test "${DRONE_TAG}" = ""; then
+          go build -v -ldflags "-X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/arm64/drone-coverage
+        else
+          go build -v -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/arm64/drone-coverage
+        fi
+
+  build_linux_arm:
+    image: golang:1.10
+    pull: true
+    group: build
+    environment:
+      - GOOS=linux
+      - GOARCH=arm
+      - CGO_ENABLED=0
+      - GOARM=7
+    commands:
+      - |
+        if test "${DRONE_TAG}" = ""; then
+          go build -v -ldflags "-X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/arm/drone-coverage
+        else
+          go build -v -ldflags "-X main.version=${DRONE_TAG##v} -X main.build=${DRONE_BUILD_NUMBER}" -a -o release/linux/arm/drone-coverage
+        fi
+
+  publish_linux_amd64:
+    image: plugins/docker:17.12
+    pull: true
+    secrets: [ docker_username, docker_password ]
+    group: docker
     repo: plugins/coverage
-    tags: [ "latest", "1.1", "1" ]
+    auto_tag: true
+    auto_tag_suffix: linux-amd64
+    dockerfile: Dockerfile
     when:
-      branch: master
-      event: push
+      event: [ push, tag ]
 
-plugin:
-  name: Coverage
-  desc: Aggregate and publish coverage reports
-  type: publish
-  image: plugins/coverage
-  labels:
-    - coverage
-    - reporting
-    - lcov
-    - simplecov
+  publish_linux_i386:
+    image: plugins/docker:17.12
+    pull: true
+    secrets: [ docker_username, docker_password ]
+    group: docker
+    repo: plugins/coverage
+    auto_tag: true
+    auto_tag_suffix: linux-i386
+    dockerfile: Dockerfile.i386
+    when:
+      event: [ push, tag ]
+
+  publish_linux_arm64:
+    image: plugins/docker:17.12
+    pull: true
+    secrets: [ docker_username, docker_password ]
+    group: docker
+    repo: plugins/coverage
+    auto_tag: true
+    auto_tag_suffix: linux-arm64
+    dockerfile: Dockerfile.arm64
+    when:
+      event: [ push, tag ]
+
+  publish_linux_arm:
+    image: plugins/docker:17.12
+    pull: true
+    secrets: [ docker_username, docker_password ]
+    group: docker
+    repo: plugins/coverage
+    auto_tag: true
+    auto_tag_suffix: linux-arm
+    dockerfile: Dockerfile.arm
+    when:
+      event: [ push, tag ]
+
+  manifests:
+    image: plugins/manifest:1
+    pull: true
+    secrets: [ docker_username, docker_password ]
+    spec: manifest.tmpl
+    auto_tag: true
+    ignore_missing: true
+    when:
+      event: [ push, tag ]
+
+  microbadger:
+    image: plugins/webhook:1
+    pull: true
+    secrets: [ webhook_url ]
+    when:
+      status: [ success ]
