@@ -7,3 +7,4 @@ LABEL maintainer="Drone.IO Community <drone-dev@googlegroups.com>" \
 
 ADD release/linux/amd64/drone-coverage /bin/
 ENTRYPOINT ["/bin/drone-coverage"]
+CMD ["publish"]
