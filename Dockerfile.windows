@@ -10,3 +10,4 @@ SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPref
 
 ADD release\drone-coverage.exe c:\drone-coverage.exe
 ENTRYPOINT [ "c:\\drone-coverage.exe" ]
+CMD ["publish"]
