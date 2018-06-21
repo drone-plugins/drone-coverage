@@ -86,7 +86,7 @@ var PublishCmd = cli.Command{
 		cli.StringFlag{
 			Name:   "server",
 			Usage:  "coverage server",
-			Value:  "**/*.*",
+			Value:  "",
 			EnvVar: "PLUGIN_SERVER",
 		},
 		cli.Float64Flag{
@@ -195,6 +195,14 @@ func publish(c *cli.Context) error {
 		secret = c.String("token")
 		cert   = c.String("cert")
 	)
+
+	if server == "" {
+		return fmt.Errorf("Coverage server not provided")
+	}
+
+	if secret == "" {
+		return fmt.Errorf("Access token not provided")
+	}
 
 	cli := newClient(server, cert, "")
 	token, err := cli.Token(secret)

@@ -3,15 +3,18 @@ package main
 import (
 	"os"
 
-	"github.com/Sirupsen/logrus"
+	log "github.com/Sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 
-var version string // build number set at compile-time
+var (
+	version = "0.0.0"
+	build   = "0"
+)
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "coverage generator"
+	app.Name = "drone-coverage plugin"
 	app.Usage = "generate and publish coverage reports"
 	app.Version = version
 	app.Before = setup
@@ -33,16 +36,20 @@ func main() {
 		PublishCmd,
 	}
 
-	app.Run(os.Args)
+	log.WithFields(log.Fields{
+		"version": app.Version,
+	}).Info(app.Name)
+
+	if err := app.Run(os.Args); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func setup(c *cli.Context) error {
-	logrus.SetOutput(os.Stderr)
-
 	if c.GlobalBool("debug") {
-		logrus.SetLevel(logrus.DebugLevel)
+		log.SetLevel(log.DebugLevel)
 	} else {
-		logrus.SetLevel(logrus.WarnLevel)
+		log.SetLevel(log.InfoLevel)
 	}
 
 	return nil
