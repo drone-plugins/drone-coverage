@@ -16,7 +16,7 @@ func main() {
 	app.Version = version
 	app.Before = setup
 	app.Flags = []cli.Flag{
-		cli.BoolFlag{
+		cli.StringFlag{
 			Name:   "ci",
 			Usage:  "continuous integration mode",
 			EnvVar: "CI",
@@ -33,7 +33,10 @@ func main() {
 		PublishCmd,
 	}
 
-	app.Run(os.Args)
+	err := app.Run(os.Args)
+	if err != nil {
+		logrus.Fatal(err)
+	}
 }
 
 func setup(c *cli.Context) error {

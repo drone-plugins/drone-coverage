@@ -13,7 +13,6 @@ import (
 	"github.com/Sirupsen/logrus"
 	"github.com/drone-plugins/drone-coverage/client"
 	"github.com/drone-plugins/drone-coverage/coverage"
-	"github.com/joho/godotenv"
 	"github.com/mattn/go-zglob"
 	"github.com/urfave/cli"
 	"golang.org/x/tools/cover"
@@ -86,7 +85,6 @@ var PublishCmd = cli.Command{
 		cli.StringFlag{
 			Name:   "server",
 			Usage:  "coverage server",
-			Value:  "**/*.*",
 			EnvVar: "PLUGIN_SERVER",
 		},
 		cli.Float64Flag{
@@ -125,10 +123,6 @@ var PublishCmd = cli.Command{
 }
 
 func publish(c *cli.Context) error {
-	if c.String("env-file") != "" {
-		_ = godotenv.Load(c.String("env-file"))
-	}
-
 	logrus.Debugf("finding coverage files that match %s", c.String("pattern"))
 
 	matches, err := zglob.Glob(c.String("pattern"))
