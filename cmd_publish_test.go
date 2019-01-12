@@ -4,8 +4,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/drone-plugins/drone-coverage/client"
+	"github.com/sirupsen/logrus"
 )
 
 func createReport(names ...string) *client.Report {
