@@ -8,38 +8,35 @@
 [![Go Doc](https://godoc.org/github.com/drone-plugins/drone-coverage?status.svg)](http://godoc.org/github.com/drone-plugins/drone-coverage)
 [![Go Report](https://goreportcard.com/badge/github.com/drone-plugins/drone-coverage)](https://goreportcard.com/report/github.com/drone-plugins/drone-coverage)
 
-Drone plugin for publishing coverage reports. For the usage information and a
-listing of the available options please take a look at [the docs](DOCS.md).
+> Warning: This plugin has not been migrated to Drone >= 0.5 yet, you are not able to use it with a current Drone version until somebody volunteers to update the plugin structure to the new format.
+
+Drone plugin for publishing coverage reports. For the usage information and a listing of the available options please take a look at [the docs](http://plugins.drone.io/drone-plugins/drone-coverage/).
 
 ## Build
 
-Build the binary with the following commands:
+Build the binary with the following command:
 
-```
-go build
-go test
+```console
+export GOOS=linux
+export GOARCH=amd64
+export CGO_ENABLED=0
+export GO111MODULE=on
+
+go build -v -a -tags netgo -o release/linux/amd64/drone-coverage
 ```
 
 ## Docker
 
-Build the Docker image with the following commands:
+Build the Docker image with the following command:
 
-```
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo
-docker build --rm=true -t plugins/coverage .
-```
-
-Please note incorrectly building the image for the correct x64 linux and with
-CGO disabled will result in an error when running the Docker image:
-
-```
-docker: Error response from daemon: Container command
-'/bin/drone-coverage' not found or does not exist..
+```console
+docker build \
+  --label org.label-schema.build-date=$(date -u +"%Y-%m-%dT%H:%M:%SZ") \
+  --label org.label-schema.vcs-ref=$(git rev-parse --short HEAD) \
+  --file docker/Dockerfile.linux.amd64 --tag plugins/coverage .
 ```
 
 ## Usage
-
-Execute from the working directory:
 
 ```sh
 docker run --rm \
@@ -55,7 +52,7 @@ docker run --rm \
   -e PLUGIN_PATTERN="path/to/lcov.info" \
   -e PLUGIN_SERVER="http://coverage.server.com" \
   -e GITHUB_TOKEN=3da541559918a808c2402b \
-  -v $(pwd)/$(pwd) \
+  -v $(pwd):$(pwd) \
   -w $(pwd) \
   plugins/coverage
 ```
