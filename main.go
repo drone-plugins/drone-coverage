@@ -7,7 +7,9 @@ import (
 	"github.com/urfave/cli"
 )
 
-var version string // build number set at compile-time
+var (
+	version = "unknown"
+)
 
 func main() {
 	app := cli.NewApp()
