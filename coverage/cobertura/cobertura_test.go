@@ -105,7 +105,7 @@ var sampleGolangToCobertura = []byte(`<?xml version="1.0" encoding="UTF-8"?>
 								<line number="30" hits="1"></line>
 							</lines>
 						</method>
-						<method name="ReadFrom" signature="" line-rate="0" branch-rate="0">
+						<method name="ReadProfiles" signature="" line-rate="0" branch-rate="0">
 							<lines>
 								<line number="34" hits="1"></line>
 								<line number="35" hits="1"></line>

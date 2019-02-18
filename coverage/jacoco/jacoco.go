@@ -27,6 +27,6 @@ func (r *reader) ReadFile(path string) ([]*cover.Profile, error) {
 	return nil, nil
 }
 
-func (r *reader) ReadFrom(src io.Reader) ([]*cover.Profile, error) {
+func (r *reader) ReadProfiles(src io.Reader) ([]*cover.Profile, error) {
 	return nil, nil
 }

@@ -26,7 +26,7 @@ func New() coverage.Reader {
 
 func (r *reader) Read(src []byte) ([]*cover.Profile, error) {
 	buf := bytes.NewBuffer(src)
-	return r.ReadFrom(buf)
+	return r.ReadProfiles(buf)
 }
 
 func (r *reader) ReadFile(path string) ([]*cover.Profile, error) {
@@ -35,10 +35,10 @@ func (r *reader) ReadFile(path string) ([]*cover.Profile, error) {
 		return nil, err
 	}
 	defer file.Close()
-	return r.ReadFrom(file)
+	return r.ReadProfiles(file)
 }
 
-func (r *reader) ReadFrom(src io.Reader) ([]*cover.Profile, error) {
+func (r *reader) ReadProfiles(src io.Reader) ([]*cover.Profile, error) {
 	buf := bufio.NewReader(src)
 	s := bufio.NewScanner(buf)
 

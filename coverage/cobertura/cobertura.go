@@ -106,7 +106,7 @@ func (r *reader) ReadFile(path string) ([]*cover.Profile, error) {
 	return r.Read(data)
 }
 
-func (r *reader) ReadFrom(src io.Reader) ([]*cover.Profile, error) {
+func (r *reader) ReadProfiles(src io.Reader) ([]*cover.Profile, error) {
 	data, err := ioutil.ReadAll(src)
 	if err != nil {
 		return nil, err

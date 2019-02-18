@@ -34,8 +34,8 @@ type Reader interface {
 	// ReadFile reads a coverage report from the file path.
 	ReadFile(string) ([]*cover.Profile, error)
 
-	// ReadFrom reads a coverage report from the io.Reader.
-	ReadFrom(io.Reader) ([]*cover.Profile, error)
+	// ReadProfiles reads a coverage report from the io.Reader.
+	ReadProfiles(io.Reader) ([]*cover.Profile, error)
 }
 
 // Register registers a reader associated with the sniff pattern.
