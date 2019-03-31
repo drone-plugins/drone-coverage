@@ -23,14 +23,14 @@ func New() coverage.Reader {
 
 func (r *reader) Read(src []byte) ([]*cover.Profile, error) {
 	buf := bytes.NewBuffer(src)
-	return r.ReadFrom(buf)
+	return r.ReadProfiles(buf)
 }
 
 func (r *reader) ReadFile(path string) ([]*cover.Profile, error) {
 	return cover.ParseProfiles(path)
 }
 
-func (r *reader) ReadFrom(src io.Reader) ([]*cover.Profile, error) {
+func (r *reader) ReadProfiles(src io.Reader) ([]*cover.Profile, error) {
 	file, err := ioutil.TempFile(os.TempDir(), "cover_file_")
 	if err != nil {
 		return nil, err
